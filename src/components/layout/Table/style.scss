@@ -1,0 +1,76 @@
+@import "vars/index.scss";
+
+.mh-table {
+  .responsiveTable {
+    overflow-x: auto;
+    border-spacing: 0;
+    white-space: nowrap;
+    border-collapse: collapse;
+
+    th, .tdBefore {
+      text-transform: uppercase;
+      color: $colorGrayB1;
+      font-size: $fontSizeSm;
+    }
+
+    tr {
+      border: unset;
+      &:not(:last-child) {
+        border-bottom: 1px $colorGrayB3 solid;
+      }
+    }
+
+    td.pivoted {
+      padding: 8px 10px 8px 0 !important;
+    }
+
+    @media screen and (min-width: 40em) {
+      td {
+        vertical-align: top;
+        min-width: 80px;
+      }
+
+      th {
+        text-align: left;
+        padding-bottom: 10px;
+      }
+    }
+
+    @media screen and (max-width: 40em) {
+      font-size: $fontSizeSm;
+
+      tr {
+        margin-bottom: $paddingSm;
+      }
+
+      td {
+        &.pivoted {
+          width: 100%;
+          white-space: normal;
+
+          .tdBefore {
+            font-family: $fontFamilyRegular;
+            padding-bottom: 5px;
+          }
+
+          &:last-child {
+            padding-bottom: 20px !important;
+          }
+        }
+
+        .tdBefore {
+          position: static;
+          width: 100%;
+        }
+      }
+    }
+
+    @media #{$mdDown} {
+      display: block;
+    }
+  }
+
+  @media #{$mdDown} {
+    font-size: 15px;
+  }
+}

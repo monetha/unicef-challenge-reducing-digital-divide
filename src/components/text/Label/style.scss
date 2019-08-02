@@ -1,0 +1,11 @@
+@import "vars/index.scss";
+
+.mh-label {
+  font-size: $fontSizeSm;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 5px;
+  word-break: break-word;
+  word-wrap: break-word;
+  color: $colorBlueB4;
+}

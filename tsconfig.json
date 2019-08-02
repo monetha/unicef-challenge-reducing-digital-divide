@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "importHelpers": true,
+    "target": "es5",
+    "module": "es2015",
+    "jsx": "react",
+    "noEmit": true,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "lib": [ "dom", "es2015", "es2016" ],
+    "baseUrl": "./",
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "forceConsistentCasingInFileNames": true,
+    "paths":{
+      "src/*": ["src/*"],
+      "core/*": ["src/core/*"],
+      "fonts/*": ["src/assets/fonts/*"],
+      "images/*": ["src/assets/images/*"],
+      "vars/*": ["src/style/vars/*"]
+    }
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}

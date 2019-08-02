@@ -1,0 +1,47 @@
+$borderRadiusXs: 5px;
+$borderRadiusSm: 10px;
+
+$paddingSm: 10px;
+
+$spaceBetweenComponentsXxs: 16px;
+$spaceBetweenComponentsXs: 20px;
+$spaceBetweenComponentsSm: 30px;
+$spaceBetweenComponentsMd: 40px;
+$spaceBetweenComponentsLg: 55px;
+$spaceBetweenComponentsXl: 80px;
+
+$smDown: "(max-width: 767px)";
+$mdDown: "(max-width: 991px)";
+$lgDown: "(max-width: 1199px)";
+
+$smUp: "(min-width: 576px)";
+$mdUp: "(min-width: 768px)";
+$lgUp: "(min-width: 992px)";
+$xlUp: "(min-width: 1200px)";
+
+$xsOnly: "(max-width: 575px)";
+$smOnly: "(min-width: 576px) and (max-width: 767px)";
+$mdOnly: "(min-width: 768px) and (max-width: 991px)";
+$lgOnly: "(min-width: 992px) and (max-width: 1199px)";
+
+$minInputSize: 50px;
+
+@function boxShadowXs($color) {
+  @return 0 1px 4px 0 rgba($color, 0.05);
+}
+
+@function boxShadowSm($color) {
+  @return 0 2px 8px 0 rgba($color, 0.05);
+}
+
+@function boxShadowMd($color) {
+  @return 0 0 25px 0 rgba($color, 0.06);
+}
+
+@function boxShadowLg($color) {
+  @return 0 10px 30px 0px rgba($color, 0.19);
+}
+
+@function boxShadowGlow($color) {
+  @return 0 5px 15px 0 rgba($color, 0.2);
+}

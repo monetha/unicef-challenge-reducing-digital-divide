@@ -1,0 +1,57 @@
+@import 'vars/index.scss';
+
+@keyframes spinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.mh-loader {
+  text-align: center;
+
+  &.mh-fullarea, &.mh-fullscreen {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+    background-color: rgba($colorWhite, 0.7);
+    z-index: 10;
+
+    .mh-spinner {
+      position: absolute;
+      margin: auto;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+
+      &:before {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-top: -20px;
+        margin-left: -20px;
+      }
+    }
+  }
+
+  &.mh-fullscreen {
+    position: fixed;
+  }
+
+  .mh-spinner {
+    &::before {
+      content: '';
+      display: inline-block;
+      box-sizing: border-box;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      border-top-color: $colorBlue;
+      border-bottom-color: $colorBlue;
+      animation: spinner .8s ease infinite;
+    }
+  }
+}

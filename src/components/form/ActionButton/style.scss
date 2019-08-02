@@ -1,0 +1,9 @@
+@import "vars/index.scss";
+
+.mh-button-container {
+  text-align: center;
+
+  @media #{$smDown} {
+    padding-bottom: 25px;
+  }
+}

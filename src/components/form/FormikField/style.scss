@@ -1,0 +1,18 @@
+@import 'vars/index.scss';
+
+.mh-formik-field {
+  &.mh-with-error {
+    input {
+      box-shadow: inset 0 0 0 3px $colorPinkDark;
+    }
+  }
+
+  .mh-error-msg {
+    margin-top: 15px  ;
+    color: $colorPinkRed;
+    background-color: $colorPink;
+    display: inline-block;
+    padding: 10px;
+    border-radius: 5px;
+  }
+}
