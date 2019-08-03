@@ -5,6 +5,7 @@ import { RouteComponentProps } from 'react-router';
 import { IState } from 'src/state/rootReducer';
 import { MainTemplate } from 'src/components/layout/MainTemplate';
 import { Content, Size } from 'src/components/layout/Content';
+import { ConnectivityExplorer } from 'src/components/connectivity/ConnectivityExplorer';
 
 // #region -------------- Interfaces --------------------------------------------------------------
 
@@ -26,7 +27,7 @@ class OverviewPage extends React.Component<IProps> {
     return (
       <MainTemplate className='mh-overview-page'>
         <Content size={Size.Md}>
-          ISP, school projects' stats overview
+          <ConnectivityExplorer />
         </Content>
       </MainTemplate>
     );

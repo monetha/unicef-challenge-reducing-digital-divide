@@ -1,16 +1,15 @@
+import classnames from 'classnames';
+import queryString from 'query-string';
 import React from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
-import './style.scss';
-import { getServices } from 'src/ioc/services';
+import { Tooltip } from 'react-tippy';
+import 'react-tippy/dist/tippy.css';
+import { DropdownIndicator } from 'src/components/indicators/DropdownIndicator';
 import { ethNetworkUrls } from 'src/constants/api';
 import { translate } from 'src/i18n';
-import classnames from 'classnames';
-import 'react-tippy/dist/tippy.css';
-import { Tooltip } from 'react-tippy';
-import { TextInput } from 'src/components/form/TextInput';
 import { registerBlockchainServices } from 'src/ioc/bootstrapIOC';
-import queryString from 'query-string';
-import { DropdownIndicator } from 'src/components/indicators/DropdownIndicator';
+import { getServices } from 'src/ioc/services';
+import './style.scss';
 
 // #region -------------- Interfaces -------------------------------------------------------------------
 
