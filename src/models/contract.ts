@@ -20,3 +20,11 @@ export enum ContractState {
   Active = 0,
   Inactive = 1,
 }
+
+export interface IFactReportEntry {
+  ispAddress: Address;
+  ispSpeed: number;
+  schoolAddress: Address;
+  schoolSpeed: number;
+  date: Date;
+}

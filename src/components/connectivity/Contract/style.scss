@@ -1,1 +1,17 @@
 @import "vars/index.scss";
+
+.mh-contract {
+  .mh-complience-percent {
+    &.mh-green {
+      color: $colorGreen;
+    }
+
+    &.mh-yellow {
+      color: $colorYellow;
+    }
+
+    &.mh-red {
+      color: $colorRed;
+    }
+  }
+}

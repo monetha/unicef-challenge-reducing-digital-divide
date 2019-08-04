@@ -3,9 +3,9 @@ import { IAsyncAction } from 'src/core/redux/asyncAction';
 import { takeEveryLatest } from 'src/core/redux/saga';
 import { getServices } from 'src/ioc/services';
 import { ContractState, IContract } from 'src/models/contract';
-import { loadContract, loadContracts } from './action';
+import { loadContract, loadContracts, IContractCreatePayload, createContract, IReportFactPayload, reportFact, ILoadReportingHistoryPayload, loadReportingHistory } from './action';
 
-// #region -------------- Loading -------------------------------------------------------------------
+// #region -------------- Contract loading -------------------------------------------------------------------
 
 function* onLoadContracts(action: IAsyncAction<void>) {
   try {
@@ -68,8 +68,61 @@ function* onLoadContract(action: IAsyncAction<string>) {
 
 // #endregion
 
+// #region -------------- Contract creation -------------------------------------------------------------------
+
+function* onCreateContract(action: IAsyncAction<IContractCreatePayload>) {
+  try {
+
+    yield put(createContract.success(null, action.subpath));
+  } catch (error) {
+    yield getServices().createErrorHandler(error)
+      .onAnyError(function* (friendlyError) {
+        yield put(createContract.failure(friendlyError, action.payload, action.subpath));
+      })
+      .process();
+  }
+}
+
+// #endregion
+
+// #region -------------- Fact reports -------------------------------------------------------------------
+
+function* onReportFact(action: IAsyncAction<IReportFactPayload>) {
+  try {
+
+    yield put(reportFact.success(null, action.subpath));
+  } catch (error) {
+    yield getServices().createErrorHandler(error)
+      .onAnyError(function* (friendlyError) {
+        yield put(reportFact.failure(friendlyError, action.payload, action.subpath));
+      })
+      .process();
+  }
+}
+
+function* onLoadReportingHistory(action: IAsyncAction<ILoadReportingHistoryPayload>) {
+  try {
+
+    yield put(loadReportingHistory.success(null, action.subpath));
+  } catch (error) {
+    yield getServices().createErrorHandler(error)
+      .onAnyError(function* (friendlyError) {
+        yield put(loadReportingHistory.failure(friendlyError, action.payload, action.subpath));
+      })
+      .process();
+  }
+}
+
+// #endregion
+
 export const contractSaga = [
   takeLatest(loadContracts.request.type, onLoadContracts),
   takeEveryLatest<IAsyncAction<string>, any>(
     loadContract.request.type, a => `${a.type}_${a.payload}`, onLoadContract),
+  takeEveryLatest<IAsyncAction<IContractCreatePayload>, any>(
+    createContract.request.type, a => `${a.type}_${a.payload.schoolAddress}`, onCreateContract),
+  takeEveryLatest<IAsyncAction<IReportFactPayload>, any>(
+    reportFact.request.type, a => `${a.type}_${a.payload.contractId}`, onReportFact),
+  takeEveryLatest<IAsyncAction<ILoadReportingHistoryPayload>, any>(
+    loadReportingHistory.request.type, a => `${a.type}_${a.payload.contractId}`, onLoadReportingHistory),
 ];

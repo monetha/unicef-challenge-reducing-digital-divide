@@ -52,6 +52,7 @@ const translations = validateBaseTranslations({
     noContract: 'School has no contract with any ISP',
     contractWith: 'Contract with',
     minSpeed: 'Ensured minimum speed',
+    contractComplience: 'Complience with the contract',
   },
   isp: {
     address: 'ISP address',

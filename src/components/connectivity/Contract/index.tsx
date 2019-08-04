@@ -9,6 +9,9 @@ import { IAsyncState } from 'src/core/redux/asyncAction';
 import { IISP } from 'src/models/isp';
 import { Address } from 'verifiable-data';
 import { loadISP } from 'src/state/isp/action';
+import classnames from 'classnames';
+import { getColorClassByScore } from 'src/utils/score';
+import { loadReportingHistory, reportFact } from 'src/state/contract/action';
 
 // #region -------------- Interfaces --------------------------------------------------------------
 
@@ -18,6 +21,8 @@ interface IStateProps {
 
 interface IDispatchProps {
   loadISP(address: Address);
+  loadReportingHistory();
+  reportSpeed: (speed: number);
 }
 
 interface ICombinedProps extends IStateProps, IDispatchProps, IProps {
@@ -37,9 +42,10 @@ class Contract extends React.Component<ICombinedProps> {
   }
 
   public componentDidMount() {
-    const { contract, loadISP: loadISPProp } = this.props;
+    const { contract, loadISP: loadISPProp, loadReportingHistory: loadReportingHistoryProp } = this.props;
 
     loadISPProp(contract.ispAddress);
+    loadReportingHistoryProp();
   }
 
   public render() {
@@ -62,8 +68,29 @@ class Contract extends React.Component<ICombinedProps> {
           <b>{translate(t => t.school.minSpeed)}: </b>
           <span>{contract.speed} MB/s</span>
         </div>
+
+        <div>
+          <b>{translate(t => t.school.contractComplience)}: </b>
+          <span
+            className={classnames('mh-complience-percent', getColorClassByScore(contract.connectivityScore))}
+          >
+            {Math.round((contract.connectivityScore || 0) * 100)}%
+          </span>
+        </div>
       </div>
     );
+  }
+
+  private renderDashboard() {
+
+  }
+
+  private renderChart() {
+
+  }
+
+  private renderHistory() {
+
   }
 }
 
@@ -81,10 +108,21 @@ const connected = connect<IStateProps, IDispatchProps, IProps, IState>(
       isp,
     };
   },
-  (dispatch) => {
+  (dispatch, ownProps) => {
     return {
       loadISP: (address: Address) => {
-        dispatch(loadISP.init(address, { cacheTimeout: -1 }))
+        dispatch(loadISP.init(address, { cacheTimeout: -1 }));
+      },
+      loadReportingHistory: () => {
+        dispatch(loadReportingHistory.init({
+          contractId: ownProps.contract.id,
+        }, { cacheTimeout: -1 }));
+      },
+      reportSpeed: (speed: number) => {
+        dispatch(reportFact.init({
+          contractId: ownProps.contract.id,
+          speed,
+        }));
       },
     };
   },

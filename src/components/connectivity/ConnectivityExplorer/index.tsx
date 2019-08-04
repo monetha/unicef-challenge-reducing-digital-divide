@@ -21,6 +21,7 @@ import { ISchoolState } from 'src/state/school/reducer';
 import { getEtherscanUrl } from 'src/utils/address';
 import './style.scss';
 import { Contract } from '../Contract';
+import { getColorClassByScore } from 'src/utils/score';
 
 // #region -------------- Interfaces --------------------------------------------------------------
 
@@ -103,7 +104,7 @@ class ConnectivityExplorer extends React.Component<IProps> {
   }
 
   private renderSchool(school: ISchoolConnectivity) {
-    const colorClass = this.getColorClassByScore(school.connectivityScore);
+    const colorClass = getColorClassByScore(school.connectivityScore);
 
     return (
       <Collapsible
@@ -151,7 +152,7 @@ class ConnectivityExplorer extends React.Component<IProps> {
   }
 
   private renderHeader(text: string, indicatorScore: number) {
-    const colorClass = this.getColorClassByScore(indicatorScore);
+    const colorClass = getColorClassByScore(indicatorScore);
 
     return (
       <div className='mh-tree-item-header'>
@@ -159,22 +160,6 @@ class ConnectivityExplorer extends React.Component<IProps> {
         <div className={classnames('mh-status-indicator', colorClass)}></div>
       </div>
     );
-  }
-
-  private getColorClassByScore(indicatorScore: number) {
-    if (!indicatorScore) {
-      return 'mh-gray';
-    }
-
-    if (indicatorScore < 0.33) {
-      return 'mh-red';
-    }
-
-    if (indicatorScore < 0.77) {
-      return 'mh-yellow';
-    }
-
-    return 'mh-green';
   }
 }
 

@@ -1,7 +1,7 @@
 import { IAsyncState, AsyncState } from 'src/core/redux/asyncAction';
 import { createReducer, ReducerBuilder } from 'src/core/redux/ReducerBuilder';
-import { IContract } from 'src/models/contract';
-import { loadContracts, loadContract } from './action';
+import { IContract, IFactReportEntry } from 'src/models/contract';
+import { loadContracts, loadContract, createContract, reportFact, loadReportingHistory } from './action';
 
 // #region -------------- State -------------------------------------------------------------------
 
@@ -16,11 +16,18 @@ export interface IContractState {
    * Status of all Contract loading progress
    */
   allLoadStatus: IAsyncState<void>;
+
+  creationStatus: { [schoolAddress: string]: IAsyncState<void> };
+  factReportingStatus: { [contractId: string]: IAsyncState<void> };
+  factReportingHistory: { [contractId: string]: IAsyncState<IFactReportEntry[]> };
 }
 
 const initialState: IContractState = {
   loaded: {},
   allLoadStatus: new AsyncState(),
+  creationStatus: {},
+  factReportingStatus: {},
+  factReportingHistory: {},
 };
 
 // #endregion
@@ -29,7 +36,10 @@ const initialState: IContractState = {
 
 const builder = new ReducerBuilder<IContractState>()
   .addAsync(loadContracts, s => s.allLoadStatus)
-  .addAsync(loadContract, s => s.loaded, a => [a]);
+  .addAsync(loadContract, s => s.loaded, a => [a])
+  .addAsync(createContract, s => s.creationStatus, a => [a.schoolAddress])
+  .addAsync(reportFact, s => s.factReportingStatus, a => [a.contractId])
+  .addAsync(loadReportingHistory, s => s.factReportingHistory, a => [a.contractId]);
 
 export const contractReducer = createReducer(initialState, builder);
 
