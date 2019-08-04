@@ -9,12 +9,12 @@
   color: $colorWhite;
   user-select: none;
   min-height: $minInputSize;
-  padding: 11px 20px;
+  padding: 6px 17px;
   font-family: $fontFamilyBold;
   font-size: $fontSizeSm;
   font-weight: bold;
-  border-bottom-right-radius: 20px;
-  border-top-left-radius: 20px;
+  border-bottom-right-radius: 15px;
+  border-top-left-radius: 15px;
   position: relative;
 
   &::after {

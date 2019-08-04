@@ -14,10 +14,15 @@
     border-radius: 5px;
   }
 
+  &.mh-warning {
+    background-color: $colorYellowB3;
+    color: $colorYellowD1;
+    box-shadow: boxShadowGlow($colorYellowB3);
+  }
+
   &.mh-info {
     background-color: $colorBlueB3;
     color: $colorBlue;
     box-shadow: boxShadowGlow($colorBlueB2);
-    margin-bottom: 15px;
   }
 }

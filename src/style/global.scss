@@ -23,6 +23,24 @@ a {
   }
 }
 
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+}
+
+h1 {
+  margin-bottom: 16px;
+}
+
+h2 {
+  margin-bottom: 16px;
+  font-weight: normal;
+}
+
+h3 {
+  margin-bottom: 8px;
+  font-weight: normal;
+}
+
 @font-face {
   font-family: 'CerebriSans';
   src: url('~fonts/CerebriSans-Regular.woff') format('woff'),

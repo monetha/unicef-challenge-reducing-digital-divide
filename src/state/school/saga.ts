@@ -15,19 +15,19 @@ function* onLoadSchools(action: IAsyncAction<void>) {
     const schools: ISchool[] = [
       {
         address: '0x123456789',
-        name: `Name_School_1`,
+        name: `Palm tree gymnasium`,
         score: 0.5,
         country: Country.ABW,
       },
       {
         address: '0x321abc321',
-        name: `Name_School_1`,
+        name: `Mabamonoko High`,
         score: 0.1,
         country: Country.ABW,
       },
       {
         address: '0xabcdefabcdef',
-        name: `Name_School_2`,
+        name: `Green leaf junior`,
         score: 0.8,
         country: Country.ZMB,
       },

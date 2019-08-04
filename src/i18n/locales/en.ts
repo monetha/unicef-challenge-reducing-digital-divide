@@ -46,6 +46,16 @@ const translations = validateBaseTranslations({
     mainnet: 'Mainnet',
     customUrl: 'Custom url',
   },
+  school: {
+    address: 'School address',
+    createContract: 'Create contract',
+    noContract: 'School has no contract with any ISP',
+    contractWith: 'Contract with',
+    minSpeed: 'Ensured minimum speed',
+  },
+  isp: {
+    address: 'ISP address',
+  },
   countries: {
     [Country.AFG]: 'Afghanistan',
     [Country.ALA]: 'Åland Islands',

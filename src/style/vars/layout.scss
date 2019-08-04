@@ -24,7 +24,7 @@ $smOnly: "(min-width: 576px) and (max-width: 767px)";
 $mdOnly: "(min-width: 768px) and (max-width: 991px)";
 $lgOnly: "(min-width: 992px) and (max-width: 1199px)";
 
-$minInputSize: 50px;
+$minInputSize: 40px;
 
 @function boxShadowXs($color) {
   @return 0 1px 4px 0 rgba($color, 0.05);

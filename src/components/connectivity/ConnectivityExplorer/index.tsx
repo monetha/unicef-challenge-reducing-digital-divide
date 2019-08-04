@@ -1,10 +1,15 @@
+import classnames from 'classnames';
 import find from 'lodash/find';
 import groupBy from 'lodash/groupBy';
 import map from 'lodash/map';
 import memoizeOne from 'memoize-one';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
+import { Button } from 'src/components/form/Button';
+import { Alert, AlertType } from 'src/components/indicators/Alert';
+import { Collapsible } from 'src/components/layout/Collapsible';
 import { Country } from 'src/constants/countries';
+import { translate } from 'src/i18n';
 import { ContractState, IContract } from 'src/models/contract';
 import { ISchool } from 'src/models/school';
 import { loadContracts } from 'src/state/contract/action';
@@ -13,10 +18,9 @@ import { loadISPs } from 'src/state/isp/action';
 import { IState } from 'src/state/rootReducer';
 import { loadSchools } from 'src/state/school/action';
 import { ISchoolState } from 'src/state/school/reducer';
+import { getEtherscanUrl } from 'src/utils/address';
 import './style.scss';
-import { Collapsible } from 'src/components/layout/Collapsible';
-import { translate } from 'src/i18n';
-import classnames from 'classnames';
+import { Contract } from '../Contract';
 
 // #region -------------- Interfaces --------------------------------------------------------------
 
@@ -99,26 +103,55 @@ class ConnectivityExplorer extends React.Component<IProps> {
   }
 
   private renderSchool(school: ISchoolConnectivity) {
+    const colorClass = this.getColorClassByScore(school.connectivityScore);
+
     return (
       <Collapsible
         header={this.renderHeader(school.data.name, school.connectivityScore)}
       >
-        {JSON.stringify(school.data)}
+        <div className={classnames('mh-school-node-contents', colorClass)}>
+          <h3>{school.data.name}</h3>
+          <b>{translate(t => t.school.address)}: </b>
+          <a href={getEtherscanUrl(school.data.address)} target='_blank'>{school.data.address}</a>
+
+          {this.renderContract(school.contract, school.data)}
+        </div>
       </Collapsible>
     );
   }
 
-  private renderContract(contract: IContract) {
+  private renderContract(contract: IContract, school: ISchool) {
+    if (!contract) {
+      return (
+        <div className='mh-contract-container'>
+          <Alert type={AlertType.Warning}>
+            <div>{translate(t => t.school.noContract)}</div>
+          </Alert>
+
+          <Button
+            type='button'
+            data-school-address={school.address}
+            onClick={this.onCreateContractClick}
+          >
+            {translate(t => t.school.createContract)}
+          </Button>
+        </div>
+      );
+    }
+
+    return (
+      <div className='mh-contract-container'>
+        <Contract contract={contract} />
+      </div>
+    );
+  }
+
+  private onCreateContractClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+
   }
 
   private renderHeader(text: string, indicatorScore: number) {
-    let colorClass = 'mh-green';
-
-    if (!indicatorScore || indicatorScore < 0.33) {
-      colorClass = 'mh-red';
-    } else if (indicatorScore < 0.77) {
-      colorClass = 'mh-yellow';
-    }
+    const colorClass = this.getColorClassByScore(indicatorScore);
 
     return (
       <div className='mh-tree-item-header'>
@@ -126,6 +159,22 @@ class ConnectivityExplorer extends React.Component<IProps> {
         <div className={classnames('mh-status-indicator', colorClass)}></div>
       </div>
     );
+  }
+
+  private getColorClassByScore(indicatorScore: number) {
+    if (!indicatorScore) {
+      return 'mh-gray';
+    }
+
+    if (indicatorScore < 0.33) {
+      return 'mh-red';
+    }
+
+    if (indicatorScore < 0.77) {
+      return 'mh-yellow';
+    }
+
+    return 'mh-green';
   }
 }
 

@@ -31,5 +31,44 @@
     &.mh-red {
       background-color: $colorRed;
     }
+
+    &.mh-gray {
+      background-color: $colorGray;
+    }
+  }
+
+  .mh-school-node-contents {
+    margin-top: 10px;
+    margin-bottom: 15px;
+    padding: 15px;
+    border-radius: 5px;
+    background-color: white;
+
+    &.mh-green {
+      border: 2px solid $colorGreen;
+      background-color: $colorGreenB3;
+    }
+
+    &.mh-yellow {
+      border: 2px solid $colorYellow;
+      background-color: $colorYellowB3;
+    }
+
+    &.mh-red {
+      border: 2px solid $colorRed;
+      background-color: $colorRedB3;
+    }
+
+    &.mh-gray {
+      border: 2px solid $colorGrayB2;
+    }
+  }
+
+  .mh-contract-container {
+    padding-top: 25px;
+
+    .mh-alert {
+      margin-bottom: 15px;
+    }
   }
 }
