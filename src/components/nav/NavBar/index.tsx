@@ -10,6 +10,7 @@ import { screenQuery } from 'src/constants/screen';
 import { createRouteUrl } from 'src/utils/nav';
 import { NetworkPicker } from '../NetworkPicker';
 import './style.scss';
+import { translate } from 'src/i18n';
 
 const logoImgUrl = require('src/assets/images/logo-white.svg');
 
@@ -246,6 +247,21 @@ export { historic as NavBar };
 // #region -------------- Items -------------------------------------------------------------------
 
 const items: INavBarLink[] = [
+  {
+    title: translate(t => t.nav.overview),
+    reactRouterPath: routes.Root,
+    path: routes.Root,
+  },
+  {
+    title: translate(t => t.nav.createISP),
+    reactRouterPath: routes.CreateISP,
+    path: routes.CreateISP,
+  },
+  {
+    title: translate(t => t.nav.createSchool),
+    reactRouterPath: routes.CreateSchool,
+    path: routes.CreateSchool,
+  },
 ];
 
 // #endregion

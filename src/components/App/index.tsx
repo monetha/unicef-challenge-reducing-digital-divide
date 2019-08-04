@@ -9,6 +9,8 @@ import 'src/style/index.scss';
 import { Loader } from '../indicators/Loader';
 import './style.scss';
 import { OverviewPage } from '../pages/Overview';
+import { CreateISPPage } from '../pages/CreateISP';
+import { CreateSchoolPage } from '../pages/CreateSchool';
 
 // #region -------------- Interface -------------------------------------------------------------------
 
@@ -41,6 +43,8 @@ class App extends React.Component<IProps> {
     return (
       <Switch>
         <Route exact path={routes.Root} component={OverviewPage} />
+        <Route exact path={routes.CreateISP} component={CreateISPPage} />
+        <Route exact path={routes.CreateSchool} component={CreateSchoolPage} />
         <Route exact path={routes.Loading} component={() => <Loader fullArea={true} fullscreen={true} />} />
         <Redirect to={routes.Root} />
       </Switch>

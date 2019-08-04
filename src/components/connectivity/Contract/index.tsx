@@ -17,6 +17,7 @@ import moment from 'moment';
 import { Table } from 'src/components/layout/Table';
 import { Tbody, Td, Th, Thead, Tr } from 'react-super-responsive-table';
 import 'react-super-responsive-table/dist/SuperResponsiveTableStyle.css';
+import { Button } from 'src/components/form/Button';
 
 // #region -------------- Interfaces --------------------------------------------------------------
 
@@ -86,6 +87,7 @@ class Contract extends React.Component<ICombinedProps> {
         </div>
 
         {this.renderDashboard()}
+        {this.renderReportButton()}
       </div>
     );
   }
@@ -163,6 +165,21 @@ class Contract extends React.Component<ICombinedProps> {
     // TODO: include ispSpeed in formula
 
     return `${Math.round(100 / contractSpeed * schoolSpeed)}%`;
+  }
+
+  private renderReportButton() {
+    return (
+      <Button
+        type='button'
+        onClick={this.onReportSpeedClick}
+      >
+        {translate(t => t.contract.reportSpeed)}
+      </Button>
+    );
+  }
+
+  private onReportSpeedClick = () => {
+
   }
 }
 

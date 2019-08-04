@@ -36,6 +36,9 @@ const translations = validateBaseTranslations({
     date: 'Date',
   },
   nav: {
+    overview: 'Overview',
+    createSchool: 'Create school',
+    createISP: 'Create ISP',
   },
   footer: {
     copyright: '© 2019 Monetha. All rights reserved.',
@@ -60,6 +63,7 @@ const translations = validateBaseTranslations({
     schoolReport: 'School report',
     contractSpeed: 'Contract speed',
     complience: 'Complience',
+    reportSpeed: 'Report speed',
   },
   isp: {
     address: 'ISP address',
