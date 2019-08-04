@@ -147,7 +147,7 @@ class ConnectivityExplorer extends React.Component<IProps> {
     );
   }
 
-  private onCreateContractClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  private onCreateContractClick = (_e: React.MouseEvent<HTMLButtonElement>) => {
 
   }
 

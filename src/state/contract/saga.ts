@@ -2,8 +2,9 @@ import { put, takeLatest } from 'redux-saga/effects';
 import { IAsyncAction } from 'src/core/redux/asyncAction';
 import { takeEveryLatest } from 'src/core/redux/saga';
 import { getServices } from 'src/ioc/services';
-import { ContractState, IContract } from 'src/models/contract';
+import { ContractState, IContract, IFactReportEntry } from 'src/models/contract';
 import { loadContract, loadContracts, IContractCreatePayload, createContract, IReportFactPayload, reportFact, ILoadReportingHistoryPayload, loadReportingHistory } from './action';
+import moment from 'moment';
 
 // #region -------------- Contract loading -------------------------------------------------------------------
 
@@ -102,8 +103,46 @@ function* onReportFact(action: IAsyncAction<IReportFactPayload>) {
 
 function* onLoadReportingHistory(action: IAsyncAction<ILoadReportingHistoryPayload>) {
   try {
+    // TODO:
+    const mockEntries: IFactReportEntry[] = [
+      {
+        date: moment().subtract(4, 'day').toDate(),
+        ispAddress: '0x123',
+        ispSpeed: 70,
+        schoolAddress: '0x321',
+        schoolSpeed: 72,
+      },
+      {
+        date: moment().subtract(3, 'day').toDate(),
+        ispAddress: '0x123',
+        ispSpeed: 70,
+        schoolAddress: '0x321',
+        schoolSpeed: 15,
+      },
+      {
+        date: moment().subtract(2, 'day').toDate(),
+        ispAddress: '0x123',
+        ispSpeed: 50,
+        schoolAddress: '0x321',
+        schoolSpeed: 3,
+      },
+      {
+        date: moment().subtract(1, 'day').toDate(),
+        ispAddress: '0x123',
+        ispSpeed: 60,
+        schoolAddress: '0x321',
+        schoolSpeed: 65,
+      },
+      {
+        date: moment().toDate(),
+        ispAddress: '0x123',
+        ispSpeed: 65,
+        schoolAddress: '0x321',
+        schoolSpeed: 30,
+      },
+    ];
 
-    yield put(loadReportingHistory.success(null, action.subpath));
+    yield put(loadReportingHistory.success(mockEntries, action.subpath));
   } catch (error) {
     yield getServices().createErrorHandler(error)
       .onAnyError(function* (friendlyError) {

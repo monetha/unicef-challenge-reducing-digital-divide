@@ -33,6 +33,7 @@ const translations = validateBaseTranslations({
     view: 'View',
     download: 'Download',
     noData: 'No data',
+    date: 'Date',
   },
   nav: {
   },
@@ -53,6 +54,12 @@ const translations = validateBaseTranslations({
     contractWith: 'Contract with',
     minSpeed: 'Ensured minimum speed',
     contractComplience: 'Complience with the contract',
+  },
+  contract: {
+    ispReport: 'ISP report',
+    schoolReport: 'School report',
+    contractSpeed: 'Contract speed',
+    complience: 'Complience',
   },
   isp: {
     address: 'ISP address',
