@@ -2,7 +2,7 @@ import find from 'lodash/find';
 import groupBy from 'lodash/groupBy';
 import map from 'lodash/map';
 import memoizeOne from 'memoize-one';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { Country } from 'src/constants/countries';
 import { ContractState, IContract } from 'src/models/contract';
@@ -14,6 +14,9 @@ import { IState } from 'src/state/rootReducer';
 import { loadSchools } from 'src/state/school/action';
 import { ISchoolState } from 'src/state/school/reducer';
 import './style.scss';
+import { Collapsible } from 'src/components/layout/Collapsible';
+import { translate } from 'src/i18n';
+import classnames from 'classnames';
 
 // #region -------------- Interfaces --------------------------------------------------------------
 
@@ -49,17 +52,78 @@ interface IProps extends IStateProps, IDispatchProps {
 // #region -------------- Component ---------------------------------------------------------------
 
 class ConnectivityExplorer extends React.Component<IProps> {
+  public constructor(props) {
+    super(props);
+  }
+
   public componentDidMount() {
     this.props.loadTree();
   }
 
   public render() {
+    return (
+      <div className='mh-connectivity-explorer'>
+        {this.renderCountries()}
+      </div>
+    );
+  }
+
+  private renderCountries() {
     const { tree } = this.props;
 
+    if (!tree) {
+      return null;
+    }
+
+    return tree.countries.map(country => {
+      return (
+        <Fragment key={country.code}>
+          {this.renderCountry(country)}
+        </Fragment>
+      );
+    });
+  }
+
+  private renderCountry(country: ICountryConnectivity) {
     return (
-      <div>
-        Connectivity explorer:
-        {JSON.stringify(tree)}
+      <Collapsible
+        header={this.renderHeader(translate(t => t.countries[country.code]), country.connectivityScore)}
+      >
+        {country.schools.map(s => (
+          <Fragment key={s.data.address}>
+            {this.renderSchool(s)}
+          </Fragment>
+        ))}
+      </Collapsible>
+    );
+  }
+
+  private renderSchool(school: ISchoolConnectivity) {
+    return (
+      <Collapsible
+        header={this.renderHeader(school.data.name, school.connectivityScore)}
+      >
+        {JSON.stringify(school.data)}
+      </Collapsible>
+    );
+  }
+
+  private renderContract(contract: IContract) {
+  }
+
+  private renderHeader(text: string, indicatorScore: number) {
+    let colorClass = 'mh-green';
+
+    if (!indicatorScore || indicatorScore < 0.33) {
+      colorClass = 'mh-red';
+    } else if (indicatorScore < 0.77) {
+      colorClass = 'mh-yellow';
+    }
+
+    return (
+      <div className='mh-tree-item-header'>
+        <div className='mh-header-text'>{text}</div>
+        <div className={classnames('mh-status-indicator', colorClass)}></div>
       </div>
     );
   }

@@ -4,9 +4,8 @@
   display: inline-block;
   border-style: solid;
   border-width: 6px 6px 0 6px;
-  border-color: $colorWhite transparent transparent transparent;
+  border-color: $colorBlue transparent transparent transparent;
   transition: transform 0.3s;
-  margin: auto 0 auto 10px;
 
   &.is-opened {
     transform: rotateZ(180deg);

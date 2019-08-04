@@ -1,0 +1,14 @@
+@import "vars/index.scss";
+
+.mh-collapsible {
+  .mh-collapsible-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    cursor: pointer;
+
+    .mh-dropdown-indicator {
+      margin-right: 10px;
+    }
+  }
+}
