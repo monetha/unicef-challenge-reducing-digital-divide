@@ -1,10 +1,11 @@
+import moment from 'moment';
 import { put, takeLatest } from 'redux-saga/effects';
 import { IAsyncAction } from 'src/core/redux/asyncAction';
 import { takeEveryLatest } from 'src/core/redux/saga';
 import { getServices } from 'src/ioc/services';
 import { ContractState, IContract, IFactReportEntry } from 'src/models/contract';
-import { loadContract, loadContracts, IContractCreatePayload, createContract, IReportFactPayload, reportFact, ILoadReportingHistoryPayload, loadReportingHistory } from './action';
-import moment from 'moment';
+import { enableMetamask } from 'src/utils/metamask';
+import { createContract, IContractCreatePayload, ILoadReportingHistoryPayload, IReportFactPayload, loadContract, loadContracts, loadReportingHistory, reportFact } from './action';
 
 // #region -------------- Contract loading -------------------------------------------------------------------
 
@@ -73,6 +74,12 @@ function* onLoadContract(action: IAsyncAction<string>) {
 
 function* onCreateContract(action: IAsyncAction<IContractCreatePayload>) {
   try {
+    const { web3 } = getServices();
+
+    yield enableMetamask();
+
+    // const writer = new FactWriter(web3, ispAddress);
+    // yield writer.setTxdata(facts.contractMetadata, /* serialized JSON */);
 
     yield put(createContract.success(null, action.subpath));
   } catch (error) {
