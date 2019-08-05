@@ -1,0 +1,7 @@
+@import "vars/index.scss";
+
+.mh-contract-form {
+  form > div + div {
+    margin-top: $spaceBetweenComponentsXs;
+  }
+}

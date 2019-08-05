@@ -22,6 +22,9 @@ import { getEtherscanUrl } from 'src/utils/address';
 import './style.scss';
 import { Contract } from '../Contract';
 import { getColorClassByScore } from 'src/utils/score';
+import { Address } from 'verifiable-data';
+import { DropdownIndicator } from 'src/components/indicators/DropdownIndicator';
+import { ContractForm } from '../ContractForm';
 
 // #region -------------- Interfaces --------------------------------------------------------------
 
@@ -52,13 +55,21 @@ interface IDispatchProps {
 interface IProps extends IStateProps, IDispatchProps {
 }
 
+interface IComponentState {
+  openedContractFormSchool: Address;
+}
+
 // #endregion
 
 // #region -------------- Component ---------------------------------------------------------------
 
-class ConnectivityExplorer extends React.Component<IProps> {
+class ConnectivityExplorer extends React.Component<IProps, IComponentState> {
   public constructor(props) {
     super(props);
+
+    this.state = {
+      openedContractFormSchool: null,
+    };
   }
 
   public componentDidMount() {
@@ -129,13 +140,7 @@ class ConnectivityExplorer extends React.Component<IProps> {
             <div>{translate(t => t.school.noContract)}</div>
           </Alert>
 
-          <Button
-            type='button'
-            data-school-address={school.address}
-            onClick={this.onCreateContractClick}
-          >
-            {translate(t => t.school.createContract)}
-          </Button>
+          {this.renderContractCreation(school)}
         </div>
       );
     }
@@ -147,8 +152,49 @@ class ConnectivityExplorer extends React.Component<IProps> {
     );
   }
 
-  private onCreateContractClick = (_e: React.MouseEvent<HTMLButtonElement>) => {
+  private renderContractCreation(school: ISchool) {
+    const { openedContractFormSchool } = this.state;
 
+    if (openedContractFormSchool !== school.address) {
+      return (
+        <Button
+          type='button'
+          data-school-address={school.address}
+          onClick={this.onCreateContractClick}
+        >
+          {translate(t => t.school.createContract)}
+        </Button>
+      );
+    }
+
+    return (
+      <div>
+        <h3
+          data-school-address={school.address}
+          onClick={this.onCreateContractClick}
+          className='mh-create-contract-header'
+        >
+          <DropdownIndicator isOpened={true} />
+          <div>
+            {translate(t => t.school.createContract)}
+          </div>
+        </h3>
+
+        <div>
+          <ContractForm school={school} />
+        </div>
+      </div>
+    );
+  }
+
+  private onCreateContractClick = (e: React.MouseEvent<HTMLElement>) => {
+    const { openedContractFormSchool } = this.state;
+
+    const schoolAddress = e.currentTarget.dataset.schoolAddress;
+
+    this.setState({
+      openedContractFormSchool: schoolAddress === openedContractFormSchool ? null : schoolAddress,
+    });
   }
 
   private renderHeader(text: string, indicatorScore: number) {

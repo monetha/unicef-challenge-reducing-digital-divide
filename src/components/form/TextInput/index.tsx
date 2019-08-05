@@ -20,7 +20,7 @@ export class TextInput extends React.PureComponent<IProps> {
       <input
         type='text'
         className={classnames({
-          'ca-text-input': true,
+          'mh-text-input': true,
         }, className)}
         {...rest}
       />
