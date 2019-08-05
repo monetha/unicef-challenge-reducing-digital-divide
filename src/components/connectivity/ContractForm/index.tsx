@@ -15,7 +15,7 @@ import { Button } from 'src/components/form/Button';
 import { DropdownInput } from 'src/components/form/DropdownInput';
 import { loadISPs } from 'src/state/isp/action';
 import { IISP } from 'src/models/isp';
-import forEach from 'lodash/foreach';
+import forEach from 'lodash/forEach';
 
 // #region -------------- Interfaces --------------------------------------------------------------
 
