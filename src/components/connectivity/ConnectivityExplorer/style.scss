@@ -71,4 +71,15 @@
       margin-bottom: 15px;
     }
   }
+
+  .mh-create-contract-header {
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    .mh-dropdown-indicator {
+      margin-right: 10px;
+    }
+  }
 }
