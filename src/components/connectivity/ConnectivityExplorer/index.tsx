@@ -132,6 +132,19 @@ class ConnectivityExplorer extends React.Component<IProps, IComponentState> {
     );
   }
 
+  private renderHeader(text: string, indicatorScore: number) {
+    const colorClass = getColorClassByScore(indicatorScore);
+
+    return (
+      <div className='mh-tree-item-header'>
+        <div className='mh-header-text'>{text}</div>
+        <div className={classnames('mh-status-indicator', colorClass)}></div>
+      </div>
+    );
+  }
+
+  // #region -------------- Contract -------------------------------------------------------------------
+
   private renderContract(contract: IContract, school: ISchool) {
     if (!contract) {
       return (
@@ -197,16 +210,7 @@ class ConnectivityExplorer extends React.Component<IProps, IComponentState> {
     });
   }
 
-  private renderHeader(text: string, indicatorScore: number) {
-    const colorClass = getColorClassByScore(indicatorScore);
-
-    return (
-      <div className='mh-tree-item-header'>
-        <div className='mh-header-text'>{text}</div>
-        <div className={classnames('mh-status-indicator', colorClass)}></div>
-      </div>
-    );
-  }
+  // #endregion
 }
 
 // #endregion

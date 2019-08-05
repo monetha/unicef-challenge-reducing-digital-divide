@@ -65,6 +65,7 @@ const translations = validateBaseTranslations({
     complience: 'Complience',
     reportSpeed: 'Report speed',
     ensuredSpeed: 'Ensured speed',
+    factualSpeed: 'Factual speed',
   },
   isp: {
     address: 'ISP address',

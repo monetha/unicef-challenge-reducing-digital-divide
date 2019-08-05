@@ -18,6 +18,8 @@ import { Table } from 'src/components/layout/Table';
 import { Tbody, Td, Th, Thead, Tr } from 'react-super-responsive-table';
 import 'react-super-responsive-table/dist/SuperResponsiveTableStyle.css';
 import { Button } from 'src/components/form/Button';
+import { DropdownIndicator } from 'src/components/indicators/DropdownIndicator';
+import { ReportSpeedForm } from '../ReportSpeedForm';
 
 // #region -------------- Interfaces --------------------------------------------------------------
 
@@ -40,13 +42,21 @@ export interface IProps {
   contract: IContract;
 }
 
+interface IComponentState {
+  isReportingOpen: boolean;
+}
+
 // #endregion
 
 // #region -------------- Component ---------------------------------------------------------------
 
-class Contract extends React.Component<ICombinedProps> {
+class Contract extends React.Component<ICombinedProps, IComponentState> {
   public constructor(props) {
     super(props);
+
+    this.state = {
+      isReportingOpen: false,
+    };
   }
 
   public componentDidMount() {
@@ -87,7 +97,7 @@ class Contract extends React.Component<ICombinedProps> {
         </div>
 
         {this.renderDashboard()}
-        {this.renderReportButton()}
+        {this.renderReporting()}
       </div>
     );
   }
@@ -167,20 +177,53 @@ class Contract extends React.Component<ICombinedProps> {
     return `${Math.round(100 / contractSpeed * schoolSpeed)}%`;
   }
 
-  private renderReportButton() {
+  // #region -------------- Reporting -------------------------------------------------------------------
+
+  private renderReporting() {
+    const { isReportingOpen } = this.state;
+    const { contract } = this.props;
+
+    if (!isReportingOpen) {
+      return (
+        <Button
+          type='button'
+          onClick={this.onReportSpeedExpandToggle}
+        >
+          {translate(t => t.contract.reportSpeed)}
+        </Button>
+      );
+    }
+
     return (
-      <Button
-        type='button'
-        onClick={this.onReportSpeedClick}
-      >
-        {translate(t => t.contract.reportSpeed)}
-      </Button>
+      <div>
+        <h3
+          onClick={this.onReportSpeedExpandToggle}
+          className='mh-report-form-header'
+        >
+          <DropdownIndicator isOpened={true} />
+          <div>
+            {translate(t => t.contract.reportSpeed)}
+          </div>
+        </h3>
+
+        <div>
+          <ReportSpeedForm
+            contract={contract}
+          />
+        </div>
+      </div>
     );
   }
 
-  private onReportSpeedClick = () => {
+  private onReportSpeedExpandToggle = () => {
+    const { isReportingOpen } = this.state;
 
+    this.setState({
+      isReportingOpen: !isReportingOpen,
+    });
   }
+
+  // #endregion
 }
 
 // #endregion
