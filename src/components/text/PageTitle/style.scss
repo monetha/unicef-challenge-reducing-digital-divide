@@ -1,0 +1,15 @@
+@import "vars/index.scss";
+
+.mh-page-title {
+  color: $colorLightestBlue;
+  font-weight: bold;
+  display: block;
+  margin: 0 0 20px 0;
+  font-size: $fontSizeLg0;
+  word-break: break-word;
+  word-wrap: break-word;
+
+  @media #{$smDown} {
+    margin-bottom: 15px;
+  }
+}

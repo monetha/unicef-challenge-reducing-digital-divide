@@ -1,0 +1,17 @@
+@import "vars/index.scss";
+
+.mh-dropdown-indicator {
+  display: inline-block;
+  border-style: solid;
+  border-width: 6px 6px 0 6px;
+  border-color: $colorBlue transparent transparent transparent;
+  transition: transform 0.3s;
+
+  &.is-opened {
+    transform: rotateZ(180deg);
+  }
+
+  &:hover {
+    cursor: pointer;
+  }
+}

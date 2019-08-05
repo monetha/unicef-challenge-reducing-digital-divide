@@ -1,0 +1,22 @@
+@import 'vars/index.scss';
+
+.mh-main-template {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  .mh-template-content {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    flex: auto;
+    min-height: 50vh;
+    padding-top: $spaceBetweenComponentsMd;
+    padding-bottom: $spaceBetweenComponentsMd;
+
+    > div {
+      flex: auto;
+      min-width: 1px;
+    }
+  }
+}

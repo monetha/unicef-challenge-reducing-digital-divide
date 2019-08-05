@@ -1,0 +1,34 @@
+@import "vars/index.scss";
+
+.with-button {
+  border-radius: 5px 0 0 5px;
+  margin: 0;
+}
+
+.view-value, .download {
+  background-color: $colorViewButton;
+  border: none;
+  font-family: $fontFamilyRegular;
+  padding: 5px 10px;
+  border-radius: 5px;
+  margin-left: 5px;
+  cursor: pointer;
+  transition: opacity 0.3s;
+  word-wrap: normal;
+  word-break: normal;
+  color: $colorBlue;
+
+  &:hover {
+    opacity: 0.5;
+  }
+}
+
+.view-value, .download {
+  float: left;
+  margin-left: 0;
+}
+
+.input-with-button {
+  display:flex;
+  flex-direction:row;
+}

@@ -1,0 +1,32 @@
+@import "vars/index.scss";
+
+.ca-text-input {
+  border-radius: $borderRadiusXs;
+  border: unset;
+  width: 100%;
+  min-height: $minInputSize;
+  box-shadow: 0 0 0 3px $colorBlue;
+  padding: $spaceBetweenComponentsXxs;
+  outline: 0;
+  transition: border 0.3s;
+  font-family: $fontFamilyRegular;
+  font-size: $fontSizeMd;
+  line-height: 17px;
+
+  &:focus {
+    box-shadow: inset 0 0 0 3px $colorLightBlue;
+  }
+
+  &::placeholder {
+    color: $colorGrayB2;
+  }
+
+  &.with-button {
+    flex-grow:2;
+
+    &:focus {
+      border: unset;
+      outline: none;
+    }
+  }
+}

@@ -1,0 +1,42 @@
+@import "vars/index.scss";
+
+.mh-content {
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: $spaceBetweenComponentsXxs;
+  padding-right: $spaceBetweenComponentsXxs;
+  width: 100%;
+
+  @media #{$smUp} {
+    width: 576px;
+  }
+
+  @media #{$mdUp} {
+    width: 768px;
+  }
+
+  @media #{$lgUp} {
+    width: 992px;
+  }
+
+  @media #{$xlUp} {
+    width: 1200px;
+  }
+
+  &.mh-sm {
+    width: 750px;
+  }
+
+  &.mh-md {
+
+  }
+
+  &.mh-lg {
+    width: 1600px;
+  }
+
+  &.mh-full {
+    padding: 0;
+  }
+}

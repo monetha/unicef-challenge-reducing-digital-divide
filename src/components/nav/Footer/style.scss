@@ -1,0 +1,25 @@
+@import 'vars/index.scss';
+
+.mh-footer {
+  background-color: $colorBlueD1;
+  color: $colorWhite;
+  padding-top: $spaceBetweenComponentsMd;
+  padding-Bottom: $spaceBetweenComponentsLg;
+
+  .mh-footer-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+
+    .mh-copyright {
+      margin-top: $spaceBetweenComponentsXxs;
+    }
+  }
+
+  .mh-logo {
+    img {
+      height: 30px;
+      width: auto;
+    }
+  }
+}

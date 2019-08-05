@@ -1,0 +1,87 @@
+@import 'vars/index.scss';
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: $colorBgBody;
+  padding: 0;
+  margin: 0;
+  font-family: $fontFamilyRegular;
+  font-size: $fontSizeMd;
+  color: $colorGray;
+}
+
+a {
+  text-decoration: none;
+  color: $colorBlue;
+  transition: color 0.5s;
+
+  &:hover {
+    color: fade-out($color: $colorBlue, $amount: 0.5);
+  }
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+}
+
+h1 {
+  margin-bottom: 16px;
+}
+
+h2 {
+  margin-bottom: 16px;
+  font-weight: normal;
+}
+
+h3 {
+  margin-bottom: 8px;
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: 'CerebriSans';
+  src: url('~fonts/CerebriSans-Regular.woff') format('woff'),
+      url('~fonts/CerebriSans-Regular.ttf') format('ttf'),
+      url('~fonts/CerebriSans-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'CerebriSansLight';
+  src: url('~fonts/CerebriSans-Light.woff') format('woff'),
+      url('~fonts/CerebriSans-Light.ttf') format('ttf'),
+      url('~fonts/CerebriSans-Light.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'CerebriSansMedium';
+  src: url('~fonts/CerebriSans-Medium.woff') format('woff'),
+      url('~fonts/CerebriSans-Medium.ttf') format('ttf'),
+      url('~fonts/CerebriSans-Medium.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'CerebriSansBold';
+  src: url('~fonts/CerebriSans-Bold.woff') format('woff'),
+      url('~fonts/CerebriSans-Bold.ttf') format('ttf'),
+      url('~fonts/CerebriSans-Bold.woff2') format('woff2');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'CerebriSansItalic';
+  src: url('~fonts/CerebriSans-Italic.woff') format('woff'),
+      url('~fonts/CerebriSans-Italic.ttf') format('ttf'),
+      url('~fonts/CerebriSans-Italic.woff2') format('woff2');
+  font-weight: bold;
+  font-style: normal;
+}

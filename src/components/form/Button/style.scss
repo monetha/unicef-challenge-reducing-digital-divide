@@ -1,0 +1,53 @@
+@import "vars/index.scss";
+
+.mh-btn {
+  border: none;
+  background-color: $colorBlue;
+  box-shadow: boxShadowGlow($colorBlue);
+  border-radius: $borderRadiusXs;
+  outline: 0;
+  color: $colorWhite;
+  user-select: none;
+  min-height: $minInputSize;
+  padding: 6px 17px;
+  font-family: $fontFamilyBold;
+  font-size: $fontSizeSm;
+  font-weight: bold;
+  border-bottom-right-radius: 15px;
+  border-top-left-radius: 15px;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba($colorWhite, 0);
+    transition: background-color 0.3s;
+  }
+
+  &:focus {
+    box-shadow: 0 0 8px rgba($colorBlue, 0.5);
+  }
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  &:hover:not(:disabled) {
+    cursor: pointer;
+
+    color: $colorWhite;
+
+    &::after {
+      background-color: rgba($colorWhite, 0.4);
+    }
+  }
+
+  > .mh-icon {
+    margin-right: $spaceBetweenComponentsXxs;
+  }
+}
