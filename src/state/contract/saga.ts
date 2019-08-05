@@ -74,12 +74,15 @@ function* onLoadContract(action: IAsyncAction<string>) {
 
 function* onCreateContract(action: IAsyncAction<IContractCreatePayload>) {
   try {
-    const { web3 } = getServices();
+    // const { web3 } = getServices();
 
     yield enableMetamask();
 
     // const writer = new FactWriter(web3, ispAddress);
-    // yield writer.setTxdata(facts.contractMetadata, /* serialized JSON */);
+    // const txConfig = yield writer.setTxdata(facts.contractMetadata, /* serialized JSON */);
+
+    // const txHash = yield sendTx(txConfig);
+    // yield waitReceipt(txHash);
 
     yield put(createContract.success(null, action.subpath));
   } catch (error) {
