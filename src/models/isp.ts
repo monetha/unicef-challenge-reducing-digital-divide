@@ -9,6 +9,7 @@ export interface IISP {
   /**
    * ISP data source Ethereum address
    */
-  address: Address;
+  address?: Address;
+  passportAddress?: Address;
   score: number;
 }

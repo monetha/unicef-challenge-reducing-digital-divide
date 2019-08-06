@@ -1,27 +1,33 @@
-import { takeLatest, put } from 'redux-saga/effects';
-import { loadISPs, loadISP } from './action';
+import { put, takeLatest } from 'redux-saga/effects';
+import { passportFactoryAddress } from 'src/constants/addresses';
+import { facts } from 'src/constants/facts';
 import { IAsyncAction } from 'src/core/redux/asyncAction';
-import { getServices } from 'src/ioc/services';
 import { takeEveryLatest } from 'src/core/redux/saga';
+import { getServices } from 'src/ioc/services';
 import { IISP } from 'src/models/isp';
-import { Address } from 'verifiable-data';
+import { Address, FactReader, IPassportRef, PassportReader } from 'verifiable-data';
+import { loadISP, loadISPs } from './action';
 
 // #region -------------- Loading -------------------------------------------------------------------
 
 function* onLoadISPs(action: IAsyncAction<void>) {
   try {
-    // TODO:
-    const addresses = [
-      '0x123456789',
-      '0xabcdefabcdef',
-    ];
+    const { web3 } = getServices();
+    const passReader = new PassportReader(web3);
 
-    for (const address of addresses) {
-      const isp: IISP = {
-        address,
-        name: `Name_ISP_${action.payload}`,
-        score: 0.5,
-      };
+    const allPassports: IPassportRef[] = yield passReader.getPassportsList(passportFactoryAddress);
+
+    for (const passport of allPassports) {
+      const factReader = new FactReader(web3, passport.address);
+
+      const jsonBytes: number[] = yield factReader.getTxdata(passport.ownerAddress, facts.ispMetadata);
+      if (!jsonBytes) {
+        continue;
+      }
+
+      const isp: IISP = JSON.parse(Buffer.from(jsonBytes).toString('utf8'));
+      isp.address = passport.ownerAddress;
+      isp.passportAddress = passport.address;
 
       yield put(loadISP.success(isp, [isp.address]));
     }
