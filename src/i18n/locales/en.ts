@@ -57,6 +57,8 @@ const translations = validateBaseTranslations({
     contractWith: 'Contract with',
     minSpeed: 'Ensured minimum speed',
     contractComplience: 'Complience with the contract',
+    creating: 'Adding school...',
+    success: 'School has been successfully added',
   },
   contract: {
     ispReport: 'ISP report',
@@ -69,6 +71,11 @@ const translations = validateBaseTranslations({
   },
   isp: {
     address: 'ISP address',
+    identityCreated: 'Identity created',
+    success: 'ISP has been successfully added',
+    creatingPassport: 'Step 1 of 3. Creating identity. Please confirm and close Metamask window...',
+    claimingOwnership: 'Step 2 of 3. Claiming ownership of the identity...',
+    submittingMetadata: 'Step 3 of 3. Submitting metadata to identity...',
   },
   countries: {
     [Country.AFG]: 'Afghanistan',

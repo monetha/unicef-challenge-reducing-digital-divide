@@ -1,16 +1,22 @@
 import { IAsyncState, AsyncState } from 'src/core/redux/asyncAction';
 import { createReducer, ReducerBuilder } from 'src/core/redux/ReducerBuilder';
 import { IISP } from 'src/models/isp';
-import { loadISPs, loadISP, identityAddress, ownershipClaimed } from './action';
+import { loadISPs, loadISP, status } from './action';
 
 // #region -------------- State -------------------------------------------------------------------
 
-export interface IPassportCreated {
-  [ispName: string]: string;
+export enum CreateISPStatuses {
+  CreatingPassport = 'Creating Passport',
+  ClaimingOwnership = 'Claiming Ownership',
+  SubmittingMetadata = 'Submitting Metadata',
+  MetadataSubmitted = 'Metadata Submitted',
 }
 
-export interface IOwnershipClaimed {
-  [address: string]: boolean;
+export interface ICreateISPStatus {
+  [ispName: string]: {
+    status: CreateISPStatuses;
+    identityAddress?: string;
+  };
 }
 
 export interface IISPState {
@@ -21,26 +27,17 @@ export interface IISPState {
   loaded: { [address: string]: IAsyncState<IISP> };
 
   /**
-   * Status of all ISP loading progress
+   * CreateISPStatuses of all ISP loading progress
    */
   allLoadStatus: IAsyncState<void>;
 
-  /**
-   * Deployed identity physicalAddress
-   */
-  identityAddress: IAsyncState<IPassportCreated>;
-
-  /**
-   * Identity ownership claimed
-   */
-  ownershipClaimed: IAsyncState<IOwnershipClaimed>;
+  status: IAsyncState<ICreateISPStatus>;
 }
 
 const initialState: IISPState = {
   loaded: {},
   allLoadStatus: new AsyncState(),
-  identityAddress: new AsyncState(),
-  ownershipClaimed: new AsyncState(),
+  status: new AsyncState(),
 };
 
 // #endregion
@@ -50,8 +47,7 @@ const initialState: IISPState = {
 const builder = new ReducerBuilder<IISPState>()
   .addAsync(loadISPs, s => s.allLoadStatus)
   .addAsync(loadISP, s => s.loaded, a => [a])
-  .addAsync(identityAddress, s => s.identityAddress)
-  .addAsync(ownershipClaimed, s => s.identityAddress);
+  .addAsync(status, s => s.status);
 
 export const ispReducer = createReducer(initialState, builder);
 

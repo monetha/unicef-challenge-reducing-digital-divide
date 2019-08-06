@@ -2,7 +2,7 @@ import { getActionNameCreator } from 'src/core/redux/action';
 import { createAsyncAction } from 'src/core/redux/asyncAction';
 import { Address } from 'verifiable-data';
 import { IISP } from 'src/models/isp';
-import { IOwnershipClaimed, IPassportCreated } from 'src/state/isp/reducer';
+import { ICreateISPStatus } from 'src/state/isp/reducer';
 
 // #region -------------- Action types -------------------------------------------------------------------
 
@@ -11,8 +11,7 @@ const get = getActionNameCreator('isp');
 export const actionTypes = {
   loadISPs: get('LOAD_ALL'),
   createISP: get('CREATE_ISP'),
-  identityAddress: get('IDENTITY_ADDRESS'),
-  ownershipClaimed: get('OWNERSHIP_CLAIMED'),
+  status: get('STATUS'),
   loadISP: get('LOAD'),
 };
 
@@ -29,9 +28,7 @@ export interface ICreateISPPayload {
 
 export const createISP = createAsyncAction<ICreateISPPayload, IISP>(actionTypes.createISP);
 
-export const identityAddress = createAsyncAction<IPassportCreated, IPassportCreated>(actionTypes.identityAddress);
-
-export const ownershipClaimed = createAsyncAction<IOwnershipClaimed, IOwnershipClaimed>(actionTypes.identityAddress);
+export const status = createAsyncAction<ICreateISPStatus, ICreateISPStatus>(actionTypes.status);
 
 export const loadISP = createAsyncAction<Address, IISP>(actionTypes.loadISP);
 

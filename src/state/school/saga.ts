@@ -6,11 +6,12 @@ import { takeEveryLatest } from 'src/core/redux/saga';
 import { getServices } from 'src/ioc/services';
 import { ISchool } from 'src/models/school';
 import { Address, FactReader, IHistoryEvent, PassportReader, FactWriter } from 'verifiable-data';
-import { loadSchool, loadSchools, createSchool } from './action';
+import { loadSchool, loadSchools, createSchool, status } from './action';
 import { getCurrentAccountAddress } from 'src/utils/metamask';
 import { Country } from 'src/constants/countries';
 import { sendTx, waitReceipt } from 'src/utils/tx';
 import { ICreateSchoolPayload } from 'src/state/school/action';
+import { CreateSchoolStatuses } from 'src/state/school/reducer';
 
 // #region -------------- Loading -------------------------------------------------------------------
 
@@ -51,6 +52,11 @@ function* onLoadSchools(action: IAsyncAction<void>) {
 function* onCreateSchool(action: IAsyncAction<ICreateSchoolPayload>) {
   try {
     const { name, score, country, physicalAddress } = action.payload;
+    yield put(status.success({
+      [name]: {
+        status: CreateSchoolStatuses.CreatingSchool,
+      },
+    }, action.subpath));
     const { web3 } = getServices();
 
     const ownerAddress = getCurrentAccountAddress();
@@ -77,9 +83,19 @@ function* onCreateSchool(action: IAsyncAction<ICreateSchoolPayload>) {
     receipt = yield waitReceipt(txHash);
     console.log('writer.setTxdata receipt', receipt);
 
+    yield put(status.success({
+      [name]: {
+        status: CreateSchoolStatuses.SchoolCreated,
+      },
+    }, action.subpath));
+
     yield put(createSchool.success(school));
 
   } catch (error) {
+    yield put(status.success({
+      [name]: null,
+    }, action.subpath));
+
     yield getServices().createErrorHandler(error)
       .onAnyError(function* (friendlyError) {
         yield put(loadSchools.failure(friendlyError, action.payload));
