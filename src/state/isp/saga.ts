@@ -1,5 +1,5 @@
 import { takeLatest, put } from 'redux-saga/effects';
-import { loadISPs, loadISP, createISP, ICreateISPPayload } from './action';
+import { loadISPs, loadISP, createISP, ICreateISPPayload, identityAddress, ownershipClaimed } from './action';
 import { IAsyncAction } from 'src/core/redux/asyncAction';
 import { getServices } from 'src/ioc/services';
 import { takeEveryLatest } from 'src/core/redux/saga';
@@ -68,18 +68,25 @@ function* onCreateISP(action: IAsyncAction<ICreateISPPayload>) {
 
     const ownerAddress = getCurrentAccountAddress();
 
-    const generator = new PassportGenerator(web3, defaultAddresses.ganache.factory);
-    let txConfig = yield generator.createPassport(ownerAddress);
+    let txHash;
+    let txConfig;
+    let receipt;
+    let passportAddress;
+
+    const generator = new PassportGenerator(web3, defaultAddresses.ropsten.factory);
+    txConfig = yield generator.createPassport(ownerAddress);
     console.log('generator.createPassport txConfig', txConfig);
 
-    let txHash = yield sendTx(txConfig);
-    let receipt = yield waitReceipt(txHash);
-    // const receipt = yield web3.eth.sendTransaction(txConfig);
+    txHash = yield sendTx(txConfig);
+    receipt = yield waitReceipt(txHash);
     console.log('generator.createPassport receipt', receipt);
 
-    const passportAddress = PassportGenerator.getPassportAddressFromReceipt(receipt);
+    passportAddress = PassportGenerator.getPassportAddressFromReceipt(receipt);
     console.log('passportAddress', passportAddress);
-    // const passportAddress = '0x50a75508b05cec65c6f4b8d320c6f87863c45ce8';
+
+    yield put(identityAddress.success({
+      [name]: passportAddress,
+    }, action.subpath));
 
     const ownership = new PassportOwnership(web3, passportAddress);
     txConfig = yield ownership.claimOwnership(ownerAddress);
@@ -89,6 +96,10 @@ function* onCreateISP(action: IAsyncAction<ICreateISPPayload>) {
     receipt = yield waitReceipt(txHash);
     console.log('ownership.claimOwnership receipt', receipt);
 
+    yield put(ownershipClaimed.success({
+      [passportAddress]: true,
+    }, action.subpath));
+
     const passportOwnerAddress = yield ownership.getOwnerAddress();
     console.log('passportOwnerAddress', passportOwnerAddress);
 
@@ -96,7 +107,7 @@ function* onCreateISP(action: IAsyncAction<ICreateISPPayload>) {
     const bytes = web3.utils.hexToBytes(web3.utils.toHex(JSON.stringify({
       name,
     })));
-    txConfig = yield writer.setTxdata(facts.contractMetadata, bytes, ownerAddress);
+    txConfig = yield writer.setTxdata(facts.ispMetadata, bytes, ownerAddress);
     console.log('writer.setTxdata txConfig', txConfig);
 
     txHash = yield sendTx(txConfig);
@@ -104,7 +115,7 @@ function* onCreateISP(action: IAsyncAction<ICreateISPPayload>) {
     console.log('writer.setTxdata receipt', receipt);
 
     const isp: IISP = {
-      address: '0x0',
+      address: passportAddress,
       name,
       score,
     };
