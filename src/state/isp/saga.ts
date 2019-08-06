@@ -20,7 +20,7 @@ function* onLoadISPs(action: IAsyncAction<void>) {
     const allPassports: IPassportRef[] = yield passReader.getPassportsList(passportFactoryAddress);
 
     for (const passport of allPassports) {
-      const factReader = new FactReader(web3, passport.address);
+      const factReader = new FactReader(web3, passport.passportAddress);
 
       const jsonBytes: number[] = yield factReader.getTxdata(passport.ownerAddress, facts.ispMetadata);
       if (!jsonBytes) {
@@ -29,7 +29,7 @@ function* onLoadISPs(action: IAsyncAction<void>) {
 
       const isp: IISP = JSON.parse(Buffer.from(jsonBytes).toString('utf8'));
       isp.address = passport.ownerAddress;
-      isp.passportAddress = passport.address;
+      isp.passportAddress = passport.passportAddress;
 
       yield put(loadISP.success(isp, [isp.address]));
     }

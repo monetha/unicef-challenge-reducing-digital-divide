@@ -11,7 +11,7 @@ export const convertCallbackToPromise = async (funcWithCallback, ...funcArgs) =>
       if (finalErr) {
         reject(finalErr);
       } else {
-        resolve(res && res.result || res);
+        resolve(res && res.result);
       }
     });
   });

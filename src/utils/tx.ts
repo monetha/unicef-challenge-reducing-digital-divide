@@ -1,5 +1,6 @@
 import { TransactionConfig, TransactionReceipt } from 'web3-core';
-import { enableMetamask, sendTransaction } from './metamask';
+import { enableMetamask, sendTransaction, getMetamaskEthereumInstance } from './metamask';
+import { convertCallbackToPromise } from './promise';
 
 export async function sendTx(txConfig: TransactionConfig) {
   await enableMetamask();
@@ -12,29 +13,29 @@ export async function sendTx(txConfig: TransactionConfig) {
  * returns a promise which is resolved when transaction finishes.
  * @param {string} txHash a string with transaction hash as value
  */
-export const waitReceipt = (txHash: string): Promise<TransactionReceipt> =>
-  new Promise((resolve, reject) => {
-    const { web3 } = window as any;
-    const cb = () => web3.eth.getTransactionReceipt(txHash, waiter);
-    const waiter = (error, receipt) => {
-      if (error) {
-        reject(error);
-        return;
-      }
+export const waitReceipt = async (txHash: string): Promise<TransactionReceipt> => {
+  const ethereum = getMetamaskEthereumInstance();
 
-      if (!receipt) {
-        setTimeout(cb, 1000);
-        return;
-      }
+  for (let i = 0; i < 50; i += 1) {
+    const receipt: TransactionReceipt = await convertCallbackToPromise(
+      ethereum.sendAsync,
+      {
+        method: 'eth_getTransactionReceipt',
+        params: [txHash],
+      });
 
-      if (!receipt.status) {
-        console.error(receipt);
-        reject('Transaction has failed');
-        return;
-      }
+    if (!receipt) {
+      await new Promise(resolve => setTimeout(resolve, 5000));
+      continue;
+    }
 
-      setTimeout(() => resolve(receipt), 10000);
-    };
+    if (!receipt.status) {
+      console.error(receipt);
+      throw new Error('Transaction has failed');
+    }
 
-    cb();
-  });
+    return receipt;
+  }
+
+  throw new Error('Failed to get receipt after 50 retries');
+};
