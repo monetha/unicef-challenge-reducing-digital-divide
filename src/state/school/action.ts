@@ -2,6 +2,7 @@ import { getActionNameCreator } from 'src/core/redux/action';
 import { createAsyncAction } from 'src/core/redux/asyncAction';
 import { Address } from 'verifiable-data';
 import { ISchool } from 'src/models/school';
+import { ICreateSchoolStatus } from 'src/state/school/reducer';
 
 // #region -------------- Action types -------------------------------------------------------------------
 
@@ -11,6 +12,7 @@ export const actionTypes = {
   loadSchools: get('LOAD_ALL'),
   loadSchool: get('LOAD'),
   createSchool: get('CREATE'),
+  status: get('STATUS'),
 };
 
 // #endregion
@@ -27,6 +29,8 @@ export interface ICreateSchoolPayload {
 }
 
 export const createSchool = createAsyncAction<ICreateSchoolPayload, ISchool>(actionTypes.createSchool);
+
+export const status = createAsyncAction<ICreateSchoolStatus, ICreateSchoolStatus>(actionTypes.status);
 
 export const loadSchool = createAsyncAction<Address, ISchool>(actionTypes.loadSchool);
 

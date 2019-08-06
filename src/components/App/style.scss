@@ -32,3 +32,18 @@
   display:flex;
   flex-direction:row;
 }
+
+.mh-create-school-page, .mh-create-isp-page {
+  .mh-text-input {
+    margin-bottom: 20px;
+  }
+
+  .mh-button-wrapper {
+    text-align: center;
+
+    .mh-btn {
+      background-color: white;
+      color: #0072ff;
+    }
+  }
+}

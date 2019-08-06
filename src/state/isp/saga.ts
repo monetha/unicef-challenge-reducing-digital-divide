@@ -8,7 +8,8 @@ import { IISP } from 'src/models/isp';
 import { getCurrentAccountAddress } from 'src/utils/metamask';
 import { sendTx, waitReceipt } from 'src/utils/tx';
 import { Address, FactReader, FactWriter, IPassportRef, PassportGenerator, PassportOwnership, PassportReader } from 'verifiable-data';
-import { createISP, ICreateISPPayload, identityAddress, loadISP, loadISPs, ownershipClaimed } from './action';
+import { createISP, ICreateISPPayload, loadISP, loadISPs, status } from './action';
+import { CreateISPStatuses } from 'src/state/isp/reducer';
 
 // #region -------------- Loading -------------------------------------------------------------------
 
@@ -79,6 +80,13 @@ function* onCreateISP(action: IAsyncAction<ICreateISPPayload>) {
   try {
     const { name, score } = action.payload;
 
+    yield put(status.success({
+      [name]: {
+        status: CreateISPStatuses.CreatingPassport,
+        identityAddress: null,
+      },
+    }, action.subpath));
+
     const { web3 } = getServices();
 
     const ownerAddress = getCurrentAccountAddress();
@@ -99,8 +107,11 @@ function* onCreateISP(action: IAsyncAction<ICreateISPPayload>) {
     passportAddress = PassportGenerator.getPassportAddressFromReceipt(receipt);
     console.log('passportAddress', passportAddress);
 
-    yield put(identityAddress.success({
-      [name]: passportAddress,
+    yield put(status.success({
+      [name]: {
+        status: CreateISPStatuses.ClaimingOwnership,
+        identityAddress: passportAddress,
+      },
     }, action.subpath));
 
     const ownership = new PassportOwnership(web3, passportAddress);
@@ -111,12 +122,15 @@ function* onCreateISP(action: IAsyncAction<ICreateISPPayload>) {
     receipt = yield waitReceipt(txHash);
     console.log('ownership.claimOwnership receipt', receipt);
 
-    yield put(ownershipClaimed.success({
-      [passportAddress]: true,
-    }, action.subpath));
-
     const passportOwnerAddress = yield ownership.getOwnerAddress();
     console.log('passportOwnerAddress', passportOwnerAddress);
+
+    yield put(status.success({
+      [name]: {
+        status: CreateISPStatuses.SubmittingMetadata,
+        identityAddress: passportAddress,
+      },
+    }, action.subpath));
 
     const writer = new FactWriter(web3, passportAddress);
     const bytes = web3.utils.hexToBytes(web3.utils.toHex(JSON.stringify({
@@ -129,6 +143,13 @@ function* onCreateISP(action: IAsyncAction<ICreateISPPayload>) {
     receipt = yield waitReceipt(txHash);
     console.log('writer.setTxdata receipt', receipt);
 
+    yield put(status.success({
+      [name]: {
+        status: CreateISPStatuses.MetadataSubmitted,
+        identityAddress: passportAddress,
+      },
+    }, action.subpath));
+
     const isp: IISP = {
       address: passportAddress,
       name,
@@ -137,6 +158,10 @@ function* onCreateISP(action: IAsyncAction<ICreateISPPayload>) {
 
     yield put(createISP.success(isp, action.subpath));
   } catch (error) {
+    yield put(status.success({
+      [name]: null,
+    }, action.subpath));
+
     yield getServices().createErrorHandler(error)
       .onAnyError(function* (friendlyError) {
         yield put(createISP.failure(friendlyError, action.payload, action.subpath));

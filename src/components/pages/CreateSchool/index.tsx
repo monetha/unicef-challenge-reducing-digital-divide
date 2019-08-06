@@ -13,37 +13,68 @@ import { Button } from 'src/components/form/Button';
 import { DropdownInput } from 'src/components/form/DropdownInput';
 import { Country } from 'src/constants/countries';
 import { createSchool } from 'src/state/school/action';
+import { AsyncState, IAsyncState } from 'core/redux/asyncAction';
+import { CreateSchoolStatuses, ICreateSchoolStatus } from 'src/state/school/reducer';
 
 // #region -------------- Interfaces --------------------------------------------------------------
 
+interface IDispatchProps {
+  onSubmit(values: IInitialValues);
+}
+
 interface IStateProps {
+  status: IAsyncState<ICreateSchoolStatus>;
+}
+
+interface IProps extends RouteComponentProps<any>, IDispatchProps, IStateProps {
+  status: AsyncState<ICreateSchoolStatus>;
+}
+
+const getCountriesDropdown = (): React.OptionHTMLAttributes<HTMLOptionElement>[] => {
+  return Object.keys(Country).map(item => ({
+    label: translate(t => t.countries[item]),
+    value: item,
+  }));
+};
+
+interface IInitialValues {
   name: string;
   physicalAddress: string;
   country?: Country;
-}
-
-interface IDispatchProps {
-  onSubmit(values: IStateProps);
-}
-
-interface IProps extends RouteComponentProps<any>, IDispatchProps {
-  countries: React.OptionHTMLAttributes<HTMLOptionElement>[];
 }
 
 // #endregion
 
 // #region -------------- Component ---------------------------------------------------------------
 
-class CreateSchoolPage extends React.Component<IProps, IStateProps> {
-  public readonly state: Readonly<IStateProps> = {
+class CreateSchoolPage extends React.Component<IProps> {
+  private readonly countriesDropdown: React.OptionHTMLAttributes<HTMLOptionElement>[];
+
+  private initialValues: IInitialValues = {
     name: '',
     physicalAddress: '',
     country: Country.USA,
   };
 
+  public constructor(props) {
+    super(props);
+
+    this.countriesDropdown = getCountriesDropdown();
+  }
+
   private renderForm = ({ handleChange, values }) => {
+    const { status } = this.props;
+    let statusText = '';
+    let statusId: CreateSchoolStatuses;
+    if (status.isFetched && status.data[values.name] !== undefined && status.data[values.name].status) {
+      statusId = status.data[values.name].status;
+      statusText = getStatusText(statusId);
+    }
+    const disabled = statusId === CreateSchoolStatuses.CreatingSchool;
+
     return (
       <Form>
+        <h1>{statusText}</h1>
         <TextInput
           name='name'
           onChange={handleChange}
@@ -58,15 +89,18 @@ class CreateSchoolPage extends React.Component<IProps, IStateProps> {
         />
         <DropdownInput
           name='country'
-          items={this.props.countries}
+          items={this.countriesDropdown}
           onChange={handleChange}
           value={values.country}
         />
-        <Button
-          type='submit'
-        >
-          {translate(t => t.nav.createSchool)}
-        </Button>
+        <div className='mh-button-wrapper'>
+          <Button
+            type='submit'
+            disabled={disabled}
+          >
+            {translate(t => t.nav.createSchool)}
+          </Button>
+        </div>
       </Form>
     );
   }
@@ -76,8 +110,8 @@ class CreateSchoolPage extends React.Component<IProps, IStateProps> {
       <MainTemplate className='mh-create-school-page'>
         <Content size={Size.Md}>
           <FormWrapper header={translate(t => t.nav.createSchool)}>
-            <Formik<IStateProps>
-              initialValues={this.state}
+            <Formik<IInitialValues>
+              initialValues={this.initialValues}
               onSubmit={this.props.onSubmit}
             >
               {this.renderForm}
@@ -91,20 +125,29 @@ class CreateSchoolPage extends React.Component<IProps, IStateProps> {
 
 // #endregion
 
+const getStatusText = (status: CreateSchoolStatuses): string => {
+  if (!status) {
+    return '';
+  }
+
+  if (status === CreateSchoolStatuses.SchoolCreated) {
+    return translate(t => t.school.success);
+  }
+
+  return translate(t => t.school.creating);
+};
+
 // #region -------------- Connect -------------------------------------------------------------------
 
 const connected = connect<IStateProps, IDispatchProps, RouteComponentProps<any>, IState>(
-  () => {
+  (state: IState) => {
     return {
-      countries: Object.keys(Country).map(item => ({
-        label: item,
-        value: item,
-      })),
+      status: state.school.status,
     };
   },
   dispatch => {
     return {
-      onSubmit(values: IStateProps) {
+      onSubmit(values: IInitialValues) {
         dispatch(createSchool.init({
           name: values.name,
           physicalAddress: values.physicalAddress,
