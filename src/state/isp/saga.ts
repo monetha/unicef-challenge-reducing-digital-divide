@@ -5,7 +5,7 @@ import { IAsyncAction } from 'src/core/redux/asyncAction';
 import { takeEveryLatest } from 'src/core/redux/saga';
 import { getServices } from 'src/ioc/services';
 import { IISP } from 'src/models/isp';
-import { getCurrentAccountAddress } from 'src/utils/metamask';
+import { getCurrentAccountAddress, enableMetamask } from 'src/utils/metamask';
 import { sendTx, waitReceipt } from 'src/utils/tx';
 import { Address, FactReader, FactWriter, IPassportRef, PassportGenerator, PassportOwnership, PassportReader } from 'verifiable-data';
 import { createISP, ICreateISPPayload, loadISP, loadISPs, status } from './action';
@@ -89,6 +89,7 @@ function* onCreateISP(action: IAsyncAction<ICreateISPPayload>) {
 
     const { web3 } = getServices();
 
+    yield enableMetamask();
     const ownerAddress = getCurrentAccountAddress();
 
     let txHash;

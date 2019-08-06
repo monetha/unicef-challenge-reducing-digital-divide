@@ -7,13 +7,8 @@ import { convertCallbackToPromise } from './promise';
  */
 export const enableMetamask = async () => {
   const ethereum = getMetamaskEthereumInstance();
-
   if (!ethereum) {
     throw new Error('Please install metamask chrome extension');
-  }
-
-  if (!ethereum.selectedAddress) {
-    throw new Error('Please select an account in metamask');
   }
 
   try {
@@ -39,13 +34,7 @@ export const enableMetamask = async () => {
  * Gets current account address selected in metamask
  */
 export const getCurrentAccountAddress = () => {
-  const ethereum = getMetamaskEthereumInstance();
-
-  if (!ethereum || !ethereum.selectedAddress) {
-    return null;
-  }
-
-  return ethereum.selectedAddress;
+  return (window as any).web3.eth.accounts[0];
 };
 
 /**
@@ -69,7 +58,7 @@ export const sendTransaction = async (txConfig: TransactionConfig): Promise<stri
         value: toHex(txConfig.value),
         data: txConfig.data,
       }],
-      from: ethereum.selectedAddress,
+      from: txConfig.from,
     },
   ) as Promise<string>;
 };

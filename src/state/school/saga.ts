@@ -7,7 +7,7 @@ import { getServices } from 'src/ioc/services';
 import { ISchool } from 'src/models/school';
 import { Address, FactReader, IHistoryEvent, PassportReader, FactWriter } from 'verifiable-data';
 import { loadSchool, loadSchools, createSchool, status } from './action';
-import { getCurrentAccountAddress } from 'src/utils/metamask';
+import { getCurrentAccountAddress, enableMetamask } from 'src/utils/metamask';
 import { Country } from 'src/constants/countries';
 import { sendTx, waitReceipt } from 'src/utils/tx';
 import { ICreateSchoolPayload } from 'src/state/school/action';
@@ -59,6 +59,7 @@ function* onCreateSchool(action: IAsyncAction<ICreateSchoolPayload>) {
     }, action.subpath));
     const { web3 } = getServices();
 
+    yield enableMetamask();
     const ownerAddress = getCurrentAccountAddress();
 
     let txHash;
