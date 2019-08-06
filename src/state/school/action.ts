@@ -10,7 +10,7 @@ const get = getActionNameCreator('school');
 export const actionTypes = {
   loadSchools: get('LOAD_ALL'),
   loadSchool: get('LOAD'),
-  createSchool: get('CREATE_SCHOOL'),
+  createSchool: get('CREATE'),
 };
 
 // #endregion
@@ -26,7 +26,7 @@ export interface ICreateSchoolPayload {
   score: number;
 }
 
-export const createSchool = createAsyncAction<ICreateSchoolPayload, ISchool>(actionTypes.loadSchools);
+export const createSchool = createAsyncAction<ICreateSchoolPayload, ISchool>(actionTypes.createSchool);
 
 export const loadSchool = createAsyncAction<Address, ISchool>(actionTypes.loadSchool);
 

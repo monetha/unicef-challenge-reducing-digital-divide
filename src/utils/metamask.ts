@@ -1,7 +1,6 @@
-import { convertCallbackToPromise } from './promise';
-import { TransactionConfig } from 'web3-core';
-import { toBN } from 'verifiable-data';
 import { getServices } from 'src/ioc/services';
+import { TransactionConfig } from 'web3-core';
+import { convertCallbackToPromise } from './promise';
 
 /**
  * Enables metamask usage so it can be used or throws error otherwise

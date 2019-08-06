@@ -1,5 +1,5 @@
 import { put, takeLatest } from 'redux-saga/effects';
-import { defaultAddresses, passportFactoryAddress } from 'src/constants/addresses';
+import { passportFactoryAddress } from 'src/constants/addresses';
 import { facts } from 'src/constants/facts';
 import { IAsyncAction } from 'src/core/redux/asyncAction';
 import { takeEveryLatest } from 'src/core/redux/saga';
