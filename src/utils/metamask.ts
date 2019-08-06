@@ -1,6 +1,7 @@
 import { convertCallbackToPromise } from './promise';
 import { TransactionConfig } from 'web3-core';
 import { toBN } from 'verifiable-data';
+import { getServices } from 'src/ioc/services';
 
 /**
  * Enables metamask usage so it can be used or throws error otherwise
@@ -57,16 +58,18 @@ export const sendTransaction = async (txConfig: TransactionConfig): Promise<stri
     throw new Error('Metamask is not enabled');
   }
 
+  const { web3 } = getServices();
+
   return convertCallbackToPromise(
     ethereum.sendAsync,
     {
       method: 'eth_sendTransaction',
       params: [{
-        gasPrice: toHex(txConfig.gasPrice),
-        gasLimit: toHex(txConfig.gas),
+        gasPrice: web3.utils.toHex(txConfig.gasPrice),
+        gasLimit: web3.utils.toHex(txConfig.gas),
         to: txConfig.to,
         from: txConfig.from,
-        value: toHex(txConfig.value),
+        value: web3.utils.toHex(txConfig.value),
         data: txConfig.data,
       }],
       from: ethereum.selectedAddress,
@@ -80,7 +83,3 @@ export const sendTransaction = async (txConfig: TransactionConfig): Promise<stri
 export const getMetamaskEthereumInstance = () => {
   return (window as any).ethereum;
 };
-
-function toHex(number: any) {
-  return `0x${toBN(number).toString(16)}`;
-}
