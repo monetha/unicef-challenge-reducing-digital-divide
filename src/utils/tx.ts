@@ -33,7 +33,7 @@ export const waitReceipt = (txHash: string): Promise<TransactionReceipt> =>
         return;
       }
 
-      setTimeout(() => resolve(receipt), 5000);
+      setTimeout(() => resolve(receipt), 10000);
     };
 
     cb();
