@@ -12,12 +12,13 @@ import { TextInput } from 'src/components/form/TextInput';
 import { Button } from 'src/components/form/Button';
 import { DropdownInput } from 'src/components/form/DropdownInput';
 import { Country } from 'src/constants/countries';
+import { createSchool } from 'src/state/school/action';
 
 // #region -------------- Interfaces --------------------------------------------------------------
 
 interface IStateProps {
   name: string;
-  address: string;
+  physicalAddress: string;
   country?: Country;
 }
 
@@ -36,7 +37,7 @@ interface IProps extends RouteComponentProps<any>, IDispatchProps {
 class CreateSchoolPage extends React.Component<IProps, IStateProps> {
   public readonly state: Readonly<IStateProps> = {
     name: '',
-    address: '',
+    physicalAddress: '',
     country: Country.USA,
   };
 
@@ -50,7 +51,7 @@ class CreateSchoolPage extends React.Component<IProps, IStateProps> {
           placeholder=''
         />
         <TextInput
-          name='address'
+          name='physicalAddress'
           onChange={handleChange}
           value={values.address}
           placeholder=''
@@ -101,13 +102,15 @@ const connected = connect<IStateProps, IDispatchProps, RouteComponentProps<any>,
       })),
     };
   },
-  () => {
+  dispatch => {
     return {
       onSubmit(values: IStateProps) {
-        console.log(values);
-        // dispatch(getPassportInformation.init({
-        //   passportAddress: values.passportAddress,
-        // }));
+        dispatch(createSchool.init({
+          name: values.name,
+          physicalAddress: values.physicalAddress,
+          country: values.country,
+          score: 0.7,
+        }));
       },
     };
   },
