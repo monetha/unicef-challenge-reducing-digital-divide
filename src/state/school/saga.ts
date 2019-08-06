@@ -1,39 +1,35 @@
-import { takeLatest, put } from 'redux-saga/effects';
-import { loadSchools, loadSchool } from './action';
+import { put, takeLatest } from 'redux-saga/effects';
+import { unicefPassportAddress } from 'src/constants/addresses';
+import { facts } from 'src/constants/facts';
 import { IAsyncAction } from 'src/core/redux/asyncAction';
-import { getServices } from 'src/ioc/services';
 import { takeEveryLatest } from 'src/core/redux/saga';
+import { getServices } from 'src/ioc/services';
 import { ISchool } from 'src/models/school';
-import { Address } from 'verifiable-data';
-import { Country } from 'src/constants/countries';
+import { Address, FactReader, IHistoryEvent, PassportReader } from 'verifiable-data';
+import { loadSchool, loadSchools } from './action';
 
 // #region -------------- Loading -------------------------------------------------------------------
 
 function* onLoadSchools(action: IAsyncAction<void>) {
   try {
-    // TODO:',
-    const schools: ISchool[] = [
-      {
-        address: '0x123456789',
-        name: `Palm tree gymnasium`,
-        score: 0.5,
-        country: Country.ABW,
-      },
-      {
-        address: '0x321abc321',
-        name: `Mabamonoko High`,
-        score: 0.1,
-        country: Country.ABW,
-      },
-      {
-        address: '0xabcdefabcdef',
-        name: `Green leaf junior`,
-        score: 0.8,
-        country: Country.ZMB,
-      },
-    ];
+    const { web3 } = getServices();
+    const passReader = new PassportReader(web3);
 
-    for (const school of schools) {
+    const factEvents: IHistoryEvent[] = yield passReader.readPassportHistory(unicefPassportAddress, {
+      key: facts.schoolMetadata,
+    });
+
+    const factReader = new FactReader(web3, unicefPassportAddress);
+
+    for (const factEvent of factEvents) {
+      const jsonBytes: number[] = yield factReader.getTxdata(factEvent.factProviderAddress, factEvent.key);
+      if (!jsonBytes) {
+        continue;
+      }
+
+      const school: ISchool = JSON.parse(Buffer.from(jsonBytes).toString('utf8'));
+      school.address = factEvent.factProviderAddress;
+
       yield put(loadSchool.success(school, [school.address]));
     }
 
@@ -50,13 +46,16 @@ function* onLoadSchools(action: IAsyncAction<void>) {
 
 function* onLoadSchool(action: IAsyncAction<Address>) {
   try {
-    // TODO:
-    const school: ISchool = {
-      address: action.payload,
-      name: `Name_School_${action.payload}`,
-      score: 1,
-      country: Country.LTU,
-    };
+    const { web3 } = getServices();
+    const factReader = new FactReader(web3, unicefPassportAddress);
+
+    const jsonBytes: number[] = yield factReader.getTxdata(action.payload, facts.schoolMetadata);
+    if (!jsonBytes) {
+      throw new Error('School does not exist');
+    }
+
+    const school: ISchool = JSON.parse(Buffer.from(jsonBytes).toString('utf8'));
+    school.address = action.payload;
 
     yield put(loadSchool.success(school, action.subpath));
   } catch (error) {
