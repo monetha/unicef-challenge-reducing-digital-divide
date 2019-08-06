@@ -5,8 +5,12 @@ import { IAsyncAction } from 'src/core/redux/asyncAction';
 import { takeEveryLatest } from 'src/core/redux/saga';
 import { getServices } from 'src/ioc/services';
 import { ISchool } from 'src/models/school';
-import { Address, FactReader, IHistoryEvent, PassportReader } from 'verifiable-data';
-import { loadSchool, loadSchools } from './action';
+import { Address, FactReader, IHistoryEvent, PassportReader, FactWriter } from 'verifiable-data';
+import { loadSchool, loadSchools, createSchool } from './action';
+import { getCurrentAccountAddress } from 'src/utils/metamask';
+import { Country } from 'src/constants/countries';
+import { sendTx, waitReceipt } from 'src/utils/tx';
+import { ICreateSchoolPayload } from 'src/state/school/action';
 
 // #region -------------- Loading -------------------------------------------------------------------
 
@@ -44,6 +48,46 @@ function* onLoadSchools(action: IAsyncAction<void>) {
   }
 }
 
+function* onCreateSchool(action: IAsyncAction<ICreateSchoolPayload>) {
+  try {
+    const { name, score, country, physicalAddress } = action.payload;
+    const { web3 } = getServices();
+
+    const ownerAddress = getCurrentAccountAddress();
+
+    let txHash;
+    let txConfig;
+    let receipt;
+
+    const school: ISchool = {
+      name,
+      country: country as Country,
+      score,
+    };
+
+    const writer = new FactWriter(web3, unicefPassportAddress);
+    const bytes = web3.utils.hexToBytes(web3.utils.toHex(JSON.stringify({
+      ...school,
+      physicalAddress,
+    })));
+    txConfig = yield writer.setTxdata(facts.schoolMetadata, bytes, ownerAddress);
+    console.log('writer.setTxdata txConfig', txConfig);
+
+    txHash = yield sendTx(txConfig);
+    receipt = yield waitReceipt(txHash);
+    console.log('writer.setTxdata receipt', receipt);
+
+    yield put(createSchool.success(school));
+
+  } catch (error) {
+    yield getServices().createErrorHandler(error)
+      .onAnyError(function* (friendlyError) {
+        yield put(loadSchools.failure(friendlyError, action.payload));
+      })
+      .process();
+  }
+}
+
 function* onLoadSchool(action: IAsyncAction<Address>) {
   try {
     const { web3 } = getServices();
@@ -71,6 +115,7 @@ function* onLoadSchool(action: IAsyncAction<Address>) {
 
 export const schoolSaga = [
   takeLatest(loadSchools.request.type, onLoadSchools),
+  takeLatest(createSchool.request.type, onCreateSchool),
   takeEveryLatest<IAsyncAction<Address>, any>(
     loadSchool.request.type, a => `${a.type}_${a.payload}`, onLoadSchool),
 ];

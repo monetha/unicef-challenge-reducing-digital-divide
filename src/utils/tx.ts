@@ -1,4 +1,3 @@
-import { getServices } from 'src/ioc/services';
 import { TransactionConfig, TransactionReceipt } from 'web3-core';
 import { enableMetamask, sendTransaction } from './metamask';
 
@@ -15,28 +14,27 @@ export async function sendTx(txConfig: TransactionConfig) {
  */
 export const waitReceipt = (txHash: string): Promise<TransactionReceipt> =>
   new Promise((resolve, reject) => {
-    const { web3 } = getServices();
-
-    const waiter = async () => {
-      try {
-        const receipt = await web3.eth.getTransactionReceipt(txHash);
-
-        if (receipt) {
-          if (!receipt.status) {
-            console.error(receipt);
-            throw new Error('Transaction has failed');
-          }
-
-          resolve(receipt);
-          return;
-        }
-      } catch (err) {
-        reject(err);
+    const { web3 } = window as any;
+    const cb = () => web3.eth.getTransactionReceipt(txHash, waiter);
+    const waiter = (error, receipt) => {
+      if (error) {
+        reject(error);
         return;
       }
 
-      setTimeout(waiter, 1000);
+      if (!receipt) {
+        setTimeout(cb, 1000);
+        return;
+      }
+
+      if (!receipt.status) {
+        console.error(receipt);
+        reject('Transaction has failed');
+        return;
+      }
+
+      setTimeout(() => resolve(receipt), 5000);
     };
 
-    waiter();
+    cb();
   });

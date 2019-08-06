@@ -10,7 +10,7 @@ export interface ISchool {
   /**
    * School data source Ethereum address
    */
-  address: Address;
+  address?: Address;
   country: Country;
   score: number;
 }
