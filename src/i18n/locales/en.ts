@@ -36,6 +36,7 @@ const translations = validateBaseTranslations({
     noData: 'No data',
     date: 'Date',
     txExecutionInProgress: 'Transaction executing in your wallet provider. \nPlease confirm it.',
+    success: 'Success',
   },
   nav: {
     overview: 'Overview',
@@ -44,6 +45,11 @@ const translations = validateBaseTranslations({
   },
   footer: {
     copyright: '© 2019 Monetha. All rights reserved.',
+  },
+  pages: {
+    overview: {
+      title: 'Connectivity overview',
+    },
   },
   form: {
   },

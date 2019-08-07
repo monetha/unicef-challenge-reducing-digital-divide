@@ -6,6 +6,7 @@ import { IState } from 'src/state/rootReducer';
 import { MainTemplate } from 'src/components/layout/MainTemplate';
 import { Content, Size } from 'src/components/layout/Content';
 import { ConnectivityExplorer } from 'src/components/connectivity/ConnectivityExplorer';
+import { translate } from 'src/i18n';
 
 // #region -------------- Interfaces --------------------------------------------------------------
 
@@ -27,6 +28,7 @@ class OverviewPage extends React.Component<IProps> {
     return (
       <MainTemplate className='mh-overview-page'>
         <Content size={Size.Md}>
+          <h1>{translate(t => t.pages.overview.title)}</h1>
           <ConnectivityExplorer />
         </Content>
       </MainTemplate>

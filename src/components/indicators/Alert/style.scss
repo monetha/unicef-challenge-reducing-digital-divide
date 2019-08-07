@@ -25,4 +25,12 @@
     color: $colorBlue;
     box-shadow: boxShadowGlow($colorBlueB2);
   }
+
+  &.mh-success {
+    color: $colorGreenB3;
+    background-color: $colorGreen;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: boxShadowGlow($colorGreen);
+  }
 }

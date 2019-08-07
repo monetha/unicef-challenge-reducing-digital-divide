@@ -52,7 +52,8 @@ const validationSchema = Yup.object().shape({
 
 class ReportSpeedForm extends React.PureComponent<ICombinedProps> {
   private initialValues: IFormValues;
-  private showErrorsSince = new Date();
+  private showAlertsSince = new Date();
+  private resetForm: () => any;
 
   public constructor(props) {
     super(props);
@@ -60,6 +61,19 @@ class ReportSpeedForm extends React.PureComponent<ICombinedProps> {
     this.initialValues = {
       speed: '',
     };
+  }
+
+  public componentDidUpdate(prevProps: ICombinedProps) {
+
+    // Check if form was just submitted successfully. If yes - reset form
+    const { reportingStatus } = this.props;
+    if (reportingStatus && !reportingStatus.isFetching && reportingStatus.isFetched && !reportingStatus.error &&
+      (!prevProps.reportingStatus || prevProps.reportingStatus.isFetching)) {
+
+      if (this.resetForm) {
+        this.resetForm();
+      }
+    }
   }
 
   public render() {
@@ -76,6 +90,7 @@ class ReportSpeedForm extends React.PureComponent<ICombinedProps> {
         )}
 
         {this.renderError()}
+        {this.renderSuccess()}
 
         <Formik<IFormValues>
           initialValues={this.initialValues}
@@ -89,9 +104,10 @@ class ReportSpeedForm extends React.PureComponent<ICombinedProps> {
     );
   }
 
-  private renderForm = ({ handleChange, values }) => {
+  private renderForm = ({ handleChange, values, resetForm }) => {
     const { reportingStatus } = this.props;
     const disabled = reportingStatus && reportingStatus.isFetching;
+    this.resetForm = resetForm;
 
     return (
       <Form>
@@ -120,13 +136,30 @@ class ReportSpeedForm extends React.PureComponent<ICombinedProps> {
       return null;
     }
 
-    if (reportingStatus.errorTimestamp < this.showErrorsSince) {
+    if (reportingStatus.errorTimestamp < this.showAlertsSince) {
       return null;
     }
 
     return (
       <Alert type={AlertType.Error}>
         {reportingStatus.error.friendlyMessage}
+      </Alert>
+    );
+  }
+
+  private renderSuccess() {
+    const { reportingStatus } = this.props;
+    if (!reportingStatus || reportingStatus.isFetching || !reportingStatus.isFetched || reportingStatus.error) {
+      return null;
+    }
+
+    if (reportingStatus.timestamp < this.showAlertsSince) {
+      return null;
+    }
+
+    return (
+      <Alert type={AlertType.Success}>
+        {translate(t => t.common.success)}!
       </Alert>
     );
   }
