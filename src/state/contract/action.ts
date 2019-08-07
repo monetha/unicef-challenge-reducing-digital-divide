@@ -21,7 +21,13 @@ export const actionTypes = {
 
 export const loadContracts = createAsyncAction<void, void>(actionTypes.loadContracts);
 
-export const loadContract = createAsyncAction<string, IContract>(actionTypes.loadContract);
+export interface ILoadContractPayload {
+  contractId: string;
+  ispPassportAddress: Address;
+  schoolAddress: Address;
+}
+
+export const loadContract = createAsyncAction<ILoadContractPayload, IContract>(actionTypes.loadContract);
 
 // #endregion
 

@@ -13,7 +13,7 @@ import { getBlockDate, sendTx, waitReceipt } from 'src/utils/tx';
 import { FactHistoryReader, FactReader, FactWriter, IHistoryEvent, PassportOwnership, PassportReader } from 'verifiable-data';
 import { loadISPs } from '../isp/action';
 import { IState } from '../rootReducer';
-import { createContract, IContractCreatePayload, ILoadReportingHistoryPayload, IReportFactPayload, loadContract, loadContracts, loadReportingHistory, reportFact } from './action';
+import { createContract, IContractCreatePayload, ILoadReportingHistoryPayload, IReportFactPayload, loadContract, loadContracts, loadReportingHistory, reportFact, ILoadContractPayload } from './action';
 
 // #region -------------- Contract loading -------------------------------------------------------------------
 
@@ -55,6 +55,10 @@ function* onLoadContracts(action: IAsyncAction<void>) {
         contract.ispPassportAddress = ispState.data.passportAddress;
         contract.schoolAddress = event.factProviderAddress;
 
+        // Get contract creation date
+        const date: Moment = yield getBlockDate(web3, event.blockNumber);
+        contract.date = date.toDate();
+
         // Try to fetch school report for this contract to get connectivity score
         jsonBytes = yield factReader.getTxdata(event.factProviderAddress, `${facts.schoolReport}${contract.id}`);
         if (jsonBytes) {
@@ -77,40 +81,41 @@ function* onLoadContracts(action: IAsyncAction<void>) {
   }
 }
 
-// function* onLoadContract(action: IAsyncAction<string>) {
-//   try {
-//     const { web3 } = getServices();
-//     const passReader = new PassportReader(web3);
+function* onLoadContract(action: IAsyncAction<ILoadContractPayload>) {
+  try {
+    const { web3 } = getServices();
+    const factReader = new FactReader(web3, action.payload.ispPassportAddress);
 
-//     let jsonBytes: number[] = yield factReader.getTxdata(event.factProviderAddress, facts.contractMetadata);
-//     if (!jsonBytes) {
-//       continue;
-//     }
+    let jsonBytes: number[] = yield factReader.getTxdata(action.payload.schoolAddress, facts.contractMetadata);
+    if (!jsonBytes) {
+      throw createFriendlyError(ErrorCode.RESOURCE_NOT_FOUND, 'Specified contract was not found');
+    }
 
-//     const contract: IContract = JSON.parse(Buffer.from(jsonBytes).toString('utf8'));
-//     contract.ispAddress = ispAddress;
-//     contract.schoolAddress = event.factProviderAddress;
+    const contract: IContract = JSON.parse(Buffer.from(jsonBytes).toString('utf8'));
+    contract.schoolAddress = action.payload.schoolAddress;
 
-//     // Try to fetch school report for this contract to get connectivity score
-//     jsonBytes = yield factReader.getTxdata(event.factProviderAddress, `${facts.schoolReport}${contract.id}`);
-//     if (jsonBytes) {
-//       const factReport: IFactReport = JSON.parse(Buffer.from(jsonBytes).toString('utf8'));
-//       contract.connectivityScore = factReport.connectivityScore;
-//     }
+    const ownership = new PassportOwnership(web3, action.payload.ispPassportAddress);
+    contract.ispAddress = yield ownership.getOwnerAddress();
 
-//     yield put(loadContract.success(contract, [contract.id]));
+    // TODO: - date must be fetched from history
+    contract.date = null;
 
-//   }
+    // Try to fetch school report for this contract to get connectivity score
+    jsonBytes = yield factReader.getTxdata(action.payload.schoolAddress, `${facts.schoolReport}${contract.id}`);
+    if (jsonBytes) {
+      const factReport: IFactReport = JSON.parse(Buffer.from(jsonBytes).toString('utf8'));
+      contract.connectivityScore = factReport.connectivityScore;
+    }
 
-//     yield put(loadContract.success(contract, action.subpath));
-// } catch (error) {
-//   yield getServices().createErrorHandler(error)
-//     .onAnyError(function* (friendlyError) {
-//       yield put(loadContract.failure(friendlyError, action.payload, action.subpath));
-//     })
-//     .process();
-// }
-//}
+    yield put(loadContract.success(contract, action.subpath));
+  } catch (error) {
+    yield getServices().createErrorHandler(error)
+      .onAnyError(function* (friendlyError) {
+        yield put(loadContract.failure(friendlyError, action.payload, action.subpath));
+      })
+      .process();
+  }
+}
 
 // #endregion
 
@@ -141,6 +146,7 @@ function* onCreateContract(action: IAsyncAction<IContractCreatePayload>) {
 
     contract.ispPassportAddress = action.payload.ispPassportAddress;
     contract.ispAddress = yield ownership.getOwnerAddress();
+    contract.date = new Date();
 
     yield put(loadContract.success(contract, [contract.id]));
 
@@ -181,12 +187,50 @@ function* onReportFact(action: IAsyncAction<IReportFactPayload>) {
 
     let factName = `${facts.ispReport}${contract.id}`;
 
-    // If school reports fact - precalculate connectivity score
     if (contract.schoolAddress === currentAddress) {
-
-      // TODO: calculate connectivity score
-      fact.connectivityScore = 0.662;
       factName = `${facts.schoolReport}${contract.id}`;
+
+      // If school reports fact - precalculate connectivity score
+      // We do this by taking scores from latest three days and averaging them
+      yield putAndTakeAsync(loadReportingHistory, a => a.init({ contract }, { cacheTimeout: -1 }));
+
+      const daysPassedFromContractStart = contract.date ? moment().startOf('day').diff(moment(contract.date).startOf('day'), 'days') : 0;
+      const daysToCount = Math.min(3, daysPassedFromContractStart + 1);
+      const factEntriesState: IAsyncState<IFactReportEntry[]> = yield select((s: IState) => s.contract.factReportingHistory[contract.id]);
+      const factEntries: IFactReportEntry[] = (factEntriesState && factEntriesState.data) ? factEntriesState.data : [];
+      const entriesByDate: { [date: string]: IFactReportEntry } = {};
+
+      factEntries.forEach(e => {
+        entriesByDate[moment(e.date).format('YYYY-MM-DD')] = e;
+      });
+
+      let sumScore = 0;
+
+      // Sum scores from previous (non-today) day reports
+      for (let i = 1; i < daysToCount; i += 1) {
+        if (!contract.speed) {
+          sumScore += 1;
+          continue;
+        }
+
+        const dateToMatch = moment().subtract(i, 'days').format('YYYY-MM-DD');
+        const entry = entriesByDate[dateToMatch];
+
+        if (!entry) {
+          continue;
+        }
+
+        sumScore += 1 / contract.speed * entry.schoolSpeed;
+      }
+
+      // Include today's score as well
+      if (!contract.speed) {
+        sumScore += 1;
+      } else {
+        sumScore += 1 / contract.speed * speed;
+      }
+
+      fact.connectivityScore = sumScore / daysToCount;
     }
 
     const jsonBytes = Array.from(Buffer.from(JSON.stringify(fact), 'utf8'));
@@ -197,6 +241,13 @@ function* onReportFact(action: IAsyncAction<IReportFactPayload>) {
 
     // Reload fact history after providing fact
     yield put(loadReportingHistory.init({ contract }));
+
+    // If we have updated connectivity score - update cached contract as well
+    if (fact.connectivityScore !== null && fact.connectivityScore !== undefined) {
+      const updatedContract = { ...contract };
+      updatedContract.connectivityScore = fact.connectivityScore;
+      yield put(loadContract.success(updatedContract, [updatedContract.id]));
+    }
 
     yield put(reportFact.success(null, action.subpath));
   } catch (error) {
@@ -278,8 +329,8 @@ function* onLoadReportingHistory(action: IAsyncAction<ILoadReportingHistoryPaylo
 
 export const contractSaga = [
   takeLatest(loadContracts.request.type, onLoadContracts),
-  // takeEveryLatest<IAsyncAction<string>, any>(
-  //   loadContract.request.type, a => `${a.type}_${a.payload}`, onLoadContract),
+  takeEveryLatest<IAsyncAction<ILoadContractPayload>, any>(
+    loadContract.request.type, a => `${a.type}_${a.payload.contractId}`, onLoadContract),
   takeEveryLatest<IAsyncAction<IContractCreatePayload>, any>(
     createContract.request.type, a => `${a.type}_${a.payload.schoolAddress}`, onCreateContract),
   takeEveryLatest<IAsyncAction<IReportFactPayload>, any>(

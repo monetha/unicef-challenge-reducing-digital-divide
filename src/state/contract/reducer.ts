@@ -36,7 +36,7 @@ const initialState: IContractState = {
 
 const builder = new ReducerBuilder<IContractState>()
   .addAsync(loadContracts, s => s.allLoadStatus)
-  .addAsync(loadContract, s => s.loaded, a => [a])
+  .addAsync(loadContract, s => s.loaded, a => [a.contractId])
   .addAsync(createContract, s => s.creationStatus, a => [a.schoolAddress])
   .addAsync(reportFact, s => s.factReportingStatus, a => [a.contract.id])
   .addAsync(loadReportingHistory, s => s.factReportingHistory, a => [a.contract.id]);

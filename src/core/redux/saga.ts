@@ -26,8 +26,8 @@ function* putAndTakeAsyncSaga<TRequestPayload, TSuccessPayload>(
   requestAction: IAsyncAction<TRequestPayload>) {
 
   const [, actionResult] = yield all([
-    put(requestAction),
     take([asyncAction.failure.type, asyncAction.success.type]),
+    put(requestAction),
   ]);
 
   if (actionResult.type === asyncAction.failure.type) {

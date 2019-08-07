@@ -17,6 +17,7 @@ export interface IContract {
   ispAddress?: Address;
   ispPassportAddress?: Address;
   connectivityScore?: number;
+  date?: Date;
 }
 
 export enum ContractState {
