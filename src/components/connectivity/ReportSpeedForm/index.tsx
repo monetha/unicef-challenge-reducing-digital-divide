@@ -117,7 +117,7 @@ const connected = connect<IStateProps, IDispatchProps, IProps, IState>(
       reportSpeed: (values: IFormValues) => {
         dispatch(reportFact.init({
           speed: Number(values.speed),
-          contractId: ownProps.contract.id,
+          contract: ownProps.contract,
         }));
       },
     };

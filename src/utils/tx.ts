@@ -45,5 +45,9 @@ export const waitReceipt = async (txHash: string): Promise<TransactionReceipt> =
 
 export async function getBlockDate(web3: Web3, blockNr: number) {
   const block: Block = await web3.eth.getBlock(blockNr);
+  if (!block) {
+    return null;
+  }
+
   return moment(new Date(Number(block.timestamp) * 1000));
 }

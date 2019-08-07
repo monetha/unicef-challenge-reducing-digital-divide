@@ -1,12 +1,14 @@
-import { Moment } from 'moment';
+import moment, { Moment } from 'moment';
 import { put, select, takeLatest } from 'redux-saga/effects';
 import { facts } from 'src/constants/facts';
+import { ErrorCode } from 'src/core/error/ErrorCode';
+import { createFriendlyError } from 'src/core/error/FriendlyError';
 import { IAsyncAction, IAsyncState } from 'src/core/redux/asyncAction';
 import { putAndTakeAsync, takeEveryLatest } from 'src/core/redux/saga';
 import { getServices } from 'src/ioc/services';
 import { ContractState, IContract, IFactReport, IFactReportEntry } from 'src/models/contract';
 import { IISP } from 'src/models/isp';
-import { enableMetamask } from 'src/utils/metamask';
+import { enableMetamask, getCurrentAccountAddress } from 'src/utils/metamask';
 import { getBlockDate, sendTx, waitReceipt } from 'src/utils/tx';
 import { FactHistoryReader, FactReader, FactWriter, IHistoryEvent, PassportOwnership, PassportReader } from 'verifiable-data';
 import { loadISPs } from '../isp/action';
@@ -158,6 +160,43 @@ function* onCreateContract(action: IAsyncAction<IContractCreatePayload>) {
 
 function* onReportFact(action: IAsyncAction<IReportFactPayload>) {
   try {
+    const { web3 } = getServices();
+
+    const { contract, speed } = action.payload;
+
+    yield enableMetamask();
+    const currentAddress = getCurrentAccountAddress();
+    if (!currentAddress) {
+      throw createFriendlyError(ErrorCode.VALIDATION_ERROR, 'Please select account in your wallet provider');
+    }
+
+    if (currentAddress !== contract.ispAddress && currentAddress !== contract.schoolAddress) {
+      throw createFriendlyError(ErrorCode.VALIDATION_ERROR, 'You must select current contract\'s ISP or school address in your wallet provider');
+    }
+
+    const factWriter = new FactWriter(web3, contract.ispPassportAddress);
+    const fact: IFactReport = {
+      speed,
+    };
+
+    let factName = `${facts.ispReport}${contract.id}`;
+
+    // If school reports fact - precalculate connectivity score
+    if (contract.schoolAddress === currentAddress) {
+
+      // TODO: calculate connectivity score
+      fact.connectivityScore = 0.662;
+      factName = `${facts.schoolReport}${contract.id}`;
+    }
+
+    const jsonBytes = Array.from(Buffer.from(JSON.stringify(fact), 'utf8'));
+    const txConfig = yield factWriter.setTxdata(factName, jsonBytes, currentAddress);
+
+    const txHash = yield sendTx(txConfig);
+    yield waitReceipt(txHash);
+
+    // Reload fact history after providing fact
+    yield put(loadReportingHistory.init({ contract }));
 
     yield put(reportFact.success(null, action.subpath));
   } catch (error) {
@@ -192,14 +231,18 @@ function* onLoadReportingHistory(action: IAsyncAction<ILoadReportingHistoryPaylo
 
     // Get data for all events
     for (const event of allEvents) {
-      const jsonBytes = yield txFactReader.getTxdata(event.transactionHash);
+      const jsonBytes = (yield txFactReader.getTxdata(event.transactionHash)).value;
       if (!jsonBytes) {
         continue;
       }
 
       const factReport: IFactReport = JSON.parse(Buffer.from(jsonBytes).toString('utf8'));
 
-      const date: Moment = yield getBlockDate(web3, event.blockNumber);
+      let date: Moment = yield getBlockDate(web3, event.blockNumber);
+      if (!date) {
+        date = moment();
+      }
+
       const dateStr = date.format('YYYY-MM-DD');
 
       if (!reports.has(dateStr)) {
@@ -240,7 +283,7 @@ export const contractSaga = [
   takeEveryLatest<IAsyncAction<IContractCreatePayload>, any>(
     createContract.request.type, a => `${a.type}_${a.payload.schoolAddress}`, onCreateContract),
   takeEveryLatest<IAsyncAction<IReportFactPayload>, any>(
-    reportFact.request.type, a => `${a.type}_${a.payload.contractId}`, onReportFact),
+    reportFact.request.type, a => `${a.type}_${a.payload.contract.id}`, onReportFact),
   takeEveryLatest<IAsyncAction<ILoadReportingHistoryPayload>, any>(
     loadReportingHistory.request.type, a => `${a.type}_${a.payload.contract.id}`, onLoadReportingHistory),
 ];

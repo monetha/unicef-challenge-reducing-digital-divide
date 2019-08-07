@@ -172,8 +172,6 @@ class Contract extends React.Component<ICombinedProps, IComponentState> {
       return 'N/A';
     }
 
-    // TODO: include ispSpeed in formula
-
     return `${Math.round(100 / contractSpeed * schoolSpeed)}%`;
   }
 
@@ -257,7 +255,7 @@ const connected = connect<IStateProps, IDispatchProps, IProps, IState>(
       },
       reportSpeed: (speed: number) => {
         dispatch(reportFact.init({
-          contractId: ownProps.contract.id,
+          contract: ownProps.contract,
           speed,
         }));
       },

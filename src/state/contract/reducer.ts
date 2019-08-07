@@ -38,7 +38,7 @@ const builder = new ReducerBuilder<IContractState>()
   .addAsync(loadContracts, s => s.allLoadStatus)
   .addAsync(loadContract, s => s.loaded, a => [a])
   .addAsync(createContract, s => s.creationStatus, a => [a.schoolAddress])
-  .addAsync(reportFact, s => s.factReportingStatus, a => [a.contractId])
+  .addAsync(reportFact, s => s.factReportingStatus, a => [a.contract.id])
   .addAsync(loadReportingHistory, s => s.factReportingHistory, a => [a.contract.id]);
 
 export const contractReducer = createReducer(initialState, builder);

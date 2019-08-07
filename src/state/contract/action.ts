@@ -40,7 +40,7 @@ export const createContract = createAsyncAction<IContractCreatePayload, void>(ac
 // #region -------------- Fact reporting -------------------------------------------------------------------
 
 export interface IReportFactPayload {
-  contractId: string;
+  contract: IContract;
   speed: number;
 }
 
