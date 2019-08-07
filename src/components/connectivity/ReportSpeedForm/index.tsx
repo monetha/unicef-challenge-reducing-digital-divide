@@ -121,6 +121,7 @@ class ReportSpeedForm extends React.PureComponent<ICombinedProps> {
             disabled={disabled}
             placeholder={`${translate(t => t.contract.factualSpeed)} Mbps`}
           />
+          <a href="https://fast.com" target='_blank'>{translate(t => t.contract.calculateSpeed)}</a>
         </FormikField>
 
         <Button type='submit'>

@@ -79,6 +79,7 @@ const translations = validateBaseTranslations({
     speedOverTime: 'Speed over time',
     speedReportHistory: 'Speed report history',
     selectIsp: 'Select ISP...',
+    calculateSpeed: 'Calculate speed with https://fast.com',
   },
   isp: {
     address: 'ISP address',
