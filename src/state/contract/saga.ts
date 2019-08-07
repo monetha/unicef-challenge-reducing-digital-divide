@@ -171,12 +171,12 @@ function* onReportFact(action: IAsyncAction<IReportFactPayload>) {
     const { contract, speed } = action.payload;
 
     yield enableMetamask();
-    const currentAddress = getCurrentAccountAddress();
+    const currentAddress = getCurrentAccountAddress().toLowerCase();
     if (!currentAddress) {
       throw createFriendlyError(ErrorCode.VALIDATION_ERROR, 'Please select account in your wallet provider');
     }
 
-    if (currentAddress !== contract.ispAddress && currentAddress !== contract.schoolAddress) {
+    if (currentAddress !== contract.ispAddress.toLowerCase() && currentAddress !== contract.schoolAddress.toLowerCase()) {
       throw createFriendlyError(ErrorCode.VALIDATION_ERROR, 'You must select current contract\'s ISP or school address in your wallet provider');
     }
 
