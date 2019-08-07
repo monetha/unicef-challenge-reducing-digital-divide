@@ -7,8 +7,12 @@ import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { Button } from 'src/components/form/Button';
 import { Alert, AlertType } from 'src/components/indicators/Alert';
+import { DropdownIndicator } from 'src/components/indicators/DropdownIndicator';
+import { Loader } from 'src/components/indicators/Loader';
 import { Collapsible } from 'src/components/layout/Collapsible';
+import { MetadataItem } from 'src/components/text/MetadataItem';
 import { Country } from 'src/constants/countries';
+import { IAsyncState } from 'src/core/redux/asyncAction';
 import { translate } from 'src/i18n';
 import { ContractState, IContract } from 'src/models/contract';
 import { ISchool } from 'src/models/school';
@@ -19,12 +23,11 @@ import { IState } from 'src/state/rootReducer';
 import { loadSchools } from 'src/state/school/action';
 import { ISchoolState } from 'src/state/school/reducer';
 import { getEtherscanUrl } from 'src/utils/address';
-import './style.scss';
-import { Contract } from '../Contract';
 import { getColorClassByScore } from 'src/utils/score';
 import { Address } from 'verifiable-data';
-import { DropdownIndicator } from 'src/components/indicators/DropdownIndicator';
+import { Contract } from '../Contract';
 import { ContractForm } from '../ContractForm';
+import './style.scss';
 
 // #region -------------- Interfaces --------------------------------------------------------------
 
@@ -46,6 +49,7 @@ interface ISchoolConnectivity {
 
 interface IStateProps {
   tree: IConnectivityTree;
+  contractsLoadingStatus: IAsyncState<void>;
 }
 
 interface IDispatchProps {
@@ -122,9 +126,11 @@ class ConnectivityExplorer extends React.Component<IProps, IComponentState> {
         header={this.renderHeader(school.data.name, school.connectivityScore)}
       >
         <div className={classnames('mh-school-node-contents', colorClass)}>
-          <h3>{school.data.name}</h3>
-          <b>{translate(t => t.school.address)}: </b>
-          <a href={getEtherscanUrl(school.data.address)} target='_blank'>{school.data.address}</a>
+          <h2>{school.data.name}</h2>
+
+          <MetadataItem title={translate(t => t.school.address)}>
+            <a href={getEtherscanUrl(school.data.address)} target='_blank'>{school.data.address}</a>
+          </MetadataItem>
 
           {this.renderContract(school.contract, school.data)}
         </div>
@@ -146,7 +152,17 @@ class ConnectivityExplorer extends React.Component<IProps, IComponentState> {
   // #region -------------- Contract -------------------------------------------------------------------
 
   private renderContract(contract: IContract, school: ISchool) {
+    const { contractsLoadingStatus } = this.props;
+
     if (!contract) {
+      if (contractsLoadingStatus.isFetching) {
+        return (
+          <div className='mh-contract-container'>
+            <Loader />
+          </div>
+        );
+      }
+
       return (
         <div className='mh-contract-container'>
           <Alert type={AlertType.Warning}>
@@ -223,6 +239,7 @@ const connected = connect<IStateProps, IDispatchProps, any, IState>(
 
     return {
       tree: createTree(school, contract),
+      contractsLoadingStatus: contract.allLoadStatus,
     };
   },
   (dispatch) => {

@@ -9,3 +9,5 @@ export const etherscanUrls = {
 };
 
 export const ipfsGatewayUrl = 'https://ipfs.io/ipfs';
+
+export const passportScannerUrl = 'https://scanner.monetha.io';

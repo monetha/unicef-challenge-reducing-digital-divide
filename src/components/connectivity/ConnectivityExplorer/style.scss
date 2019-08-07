@@ -46,17 +46,17 @@
 
     &.mh-green {
       border: 2px solid $colorGreen;
-      background-color: $colorGreenB3;
+      box-shadow: boxShadowGlow($colorGreen);
     }
 
     &.mh-yellow {
       border: 2px solid $colorYellow;
-      background-color: $colorYellowB3;
+      box-shadow: boxShadowGlow($colorYellow);
     }
 
     &.mh-red {
       border: 2px solid $colorRed;
-      background-color: $colorRedB3;
+      box-shadow: boxShadowGlow($colorRed);
     }
 
     &.mh-gray {
@@ -65,7 +65,7 @@
   }
 
   .mh-contract-container {
-    padding-top: 25px;
+    padding-top: $spaceBetweenComponentsXs;
 
     .mh-alert {
       margin-bottom: 15px;

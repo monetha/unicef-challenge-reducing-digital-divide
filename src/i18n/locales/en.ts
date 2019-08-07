@@ -26,6 +26,7 @@ const translations = validateBaseTranslations({
     mustBePositiveNumber: 'Must be a positive number',
     mustBeWholeNumber: 'Must be a whole number',
     tooManyResults: 'Too many results',
+    transactionDenied: 'Transaction was denied',
   },
   common: {
     submit: 'Submit',
@@ -34,6 +35,7 @@ const translations = validateBaseTranslations({
     download: 'Download',
     noData: 'No data',
     date: 'Date',
+    txExecutionInProgress: 'Transaction executing in your wallet provider. \nPlease confirm it.',
   },
   nav: {
     overview: 'Overview',
@@ -68,9 +70,12 @@ const translations = validateBaseTranslations({
     reportSpeed: 'Report speed',
     ensuredSpeed: 'Ensured speed',
     factualSpeed: 'Factual speed',
+    speedOverTime: 'Speed over time',
+    speedReportHistory: 'Speed report history',
   },
   isp: {
     address: 'ISP address',
+    passport: 'ISP digital identity',
     identityCreated: 'Identity created',
     success: 'ISP has been successfully added',
     creatingPassport: 'Step 1 of 3. Creating identity. Please confirm and close Metamask window...',

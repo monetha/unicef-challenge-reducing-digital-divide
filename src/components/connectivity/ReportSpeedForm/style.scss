@@ -1,7 +1,9 @@
 @import "vars/index.scss";
 
-.mh-contract-form {
+.mh-report-speed-form {
   form > div + div {
     margin-top: $spaceBetweenComponentsXs;
   }
+
+  position: relative;
 }

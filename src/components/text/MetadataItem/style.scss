@@ -1,0 +1,32 @@
+@import "vars/index.scss";
+
+.mh-metadata-item {
+  &:not(:last-child) {
+    margin-bottom: 10px;
+
+    @media #{$smDown} {
+      margin-bottom: 20px;
+    }
+  }
+
+  .mh-title {
+    display: inline-block;
+    min-width: 30%;
+    color: $colorGrayB1;
+
+    @media #{$mdDown} {
+      min-width: 40%;
+    }
+  }
+
+  .mh-contents {
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    @media #{$smDown} {
+      display: block;
+      margin-top: 10px;
+    }
+  }
+}

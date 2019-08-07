@@ -15,25 +15,21 @@
     left: 0;
     right: 0;
     top: 0;
-    background-color: rgba($colorWhite, 0.7);
+    background-color: rgba($colorWhite, 0.9);
     z-index: 10;
 
     .mh-spinner {
-      position: absolute;
-      margin: auto;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      right: 0;
-
-      &:before {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        margin-top: -20px;
-        margin-left: -20px;
-      }
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
     }
+  }
+
+  .mh-message {
+    white-space: pre-line;
+    font-family: $fontFamilyBold;
+    padding-bottom: 15px;
   }
 
   &.mh-fullscreen {
@@ -41,7 +37,7 @@
   }
 
   .mh-spinner {
-    &::before {
+    .mh-spinner-indicator {
       content: '';
       display: inline-block;
       box-sizing: border-box;

@@ -11,6 +11,8 @@ import { reportFact } from 'src/state/contract/action';
 import { IState } from 'src/state/rootReducer';
 import * as Yup from 'yup';
 import './style.scss';
+import { Loader } from 'src/components/indicators/Loader';
+import { Alert, AlertType } from 'src/components/indicators/Alert';
 
 // #region -------------- Interfaces --------------------------------------------------------------
 
@@ -50,6 +52,7 @@ const validationSchema = Yup.object().shape({
 
 class ReportSpeedForm extends React.PureComponent<ICombinedProps> {
   private initialValues: IFormValues;
+  private showErrorsSince = new Date();
 
   public constructor(props) {
     super(props);
@@ -60,8 +63,20 @@ class ReportSpeedForm extends React.PureComponent<ICombinedProps> {
   }
 
   public render() {
+    const { reportingStatus } = this.props;
+    const isLoading = reportingStatus && reportingStatus.isFetching;
+
     return (
-      <div className='mh-contract-form'>
+      <div className='mh-report-speed-form'>
+        {isLoading && (
+          <Loader
+            fullArea={true}
+            message={translate(t => t.common.txExecutionInProgress)}
+          />
+        )}
+
+        {this.renderError()}
+
         <Formik<IFormValues>
           initialValues={this.initialValues}
           onSubmit={this.props.reportSpeed}
@@ -96,6 +111,23 @@ class ReportSpeedForm extends React.PureComponent<ICombinedProps> {
           {translate(t => t.common.submit)}
         </Button>
       </Form>
+    );
+  }
+
+  private renderError() {
+    const { reportingStatus } = this.props;
+    if (!reportingStatus || reportingStatus.isFetching || !reportingStatus.error) {
+      return null;
+    }
+
+    if (reportingStatus.errorTimestamp < this.showErrorsSince) {
+      return null;
+    }
+
+    return (
+      <Alert type={AlertType.Error}>
+        {reportingStatus.error.friendlyMessage}
+      </Alert>
     );
   }
 }

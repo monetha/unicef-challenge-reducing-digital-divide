@@ -15,7 +15,46 @@
     }
   }
 
-  .mh-dashboard {}
+  .mh-dashboard {
+    position: relative;
+    margin-top: $spaceBetweenComponentsSm;
+  }
+
+  .mh-linechart {
+
+    h4 {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .mh-linechart-content {
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .recharts-legend-item {
+      margin-right: 20px !important;
+    }
+
+    .recharts-default-legend {
+      padding-top: 10px;
+    }
+
+    .recharts-legend-item-text {
+      @media #{$smDown} {
+        font-size: 14px
+      }
+    }
+  }
+
+  .mh-history {
+    margin-top: $spaceBetweenComponentsXs;
+  }
+
+  .mh-speed-reporting {
+    margin-top: $spaceBetweenComponentsXs;
+  }
 
   .mh-report-form-header {
     cursor: pointer;

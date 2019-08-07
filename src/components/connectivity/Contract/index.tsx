@@ -8,10 +8,10 @@ import { IISP } from 'src/models/isp';
 import { loadReportingHistory, reportFact } from 'src/state/contract/action';
 import { loadISP } from 'src/state/isp/action';
 import { IState } from 'src/state/rootReducer';
-import { getEtherscanUrl } from 'src/utils/address';
+import { getEtherscanUrl, getPassportScannerUrl } from 'src/utils/address';
 import { getColorClassByScore } from 'src/utils/score';
 import { Address } from 'verifiable-data';
-import { LineChart, XAxis, YAxis, CartesianGrid, Line, Legend } from 'recharts';
+import { LineChart, XAxis, YAxis, CartesianGrid, Line, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 import './style.scss';
 import moment from 'moment';
 import { Table } from 'src/components/layout/Table';
@@ -20,6 +20,8 @@ import 'react-super-responsive-table/dist/SuperResponsiveTableStyle.css';
 import { Button } from 'src/components/form/Button';
 import { DropdownIndicator } from 'src/components/indicators/DropdownIndicator';
 import { ReportSpeedForm } from '../ReportSpeedForm';
+import { Loader } from 'src/components/indicators/Loader';
+import { MetadataItem } from 'src/components/text/MetadataItem';
 
 // #region -------------- Interfaces --------------------------------------------------------------
 
@@ -67,37 +69,51 @@ class Contract extends React.Component<ICombinedProps, IComponentState> {
   }
 
   public render() {
+    return (
+      <div className='mh-contract'>
+        {this.renderContractMetadata()}
+        {this.renderDashboard()}
+        {this.renderReporting()}
+      </div>
+    );
+  }
+
+  private renderContractMetadata() {
     const { contract, isp } = this.props;
 
-    if (!isp || !isp.data) {
+    if (!isp || (!isp.data && isp.isFetching)) {
+      return (
+        <Loader />
+      );
+    }
+
+    if (!isp.data) {
       return null;
     }
 
     return (
-      <div className='mh-contract'>
+      <div className='mh-metadata'>
         <h3>{translate(t => t.school.contractWith)} {isp.data.name}</h3>
 
-        <div>
-          <b>{translate(t => t.isp.address)}: </b>
+        <MetadataItem title={translate(t => t.isp.address)}>
           <a href={getEtherscanUrl(contract.ispAddress)} target='_blank'>{contract.ispAddress}</a>
-        </div>
+        </MetadataItem>
 
-        <div>
-          <b>{translate(t => t.school.minSpeed)}: </b>
-          <span>{contract.speed} MB/s</span>
-        </div>
+        <MetadataItem title={translate(t => t.isp.passport)}>
+          <a href={getPassportScannerUrl(contract.ispPassportAddress)} target='_blank'>{contract.ispPassportAddress}</a>
+        </MetadataItem>
 
-        <div>
-          <b>{translate(t => t.school.contractComplience)}: </b>
+        <MetadataItem title={translate(t => t.school.minSpeed)}>
+          <span>{contract.speed} Mbps</span>
+        </MetadataItem>
+
+        <MetadataItem title={translate(t => t.school.contractComplience)}>
           <span
             className={classnames('mh-complience-percent', getColorClassByScore(contract.connectivityScore))}
           >
             {Math.round((contract.connectivityScore || 0) * 100)}%
           </span>
-        </div>
-
-        {this.renderDashboard()}
-        {this.renderReporting()}
+        </MetadataItem>
       </div>
     );
   }
@@ -105,12 +121,22 @@ class Contract extends React.Component<ICombinedProps, IComponentState> {
   private renderDashboard() {
     const { historicalData } = this.props;
 
-    if (!historicalData || !historicalData.data) {
+    if (!historicalData || (!historicalData.data && historicalData.isFetching)) {
+      return (
+        <Loader />
+      );
+    }
+
+    if (!historicalData.data) {
       return null;
     }
 
     return (
       <div className='mh-dashboard'>
+        {historicalData.isFetching && (
+          <Loader fullArea={true} />
+        )}
+
         {this.renderChart(historicalData.data)}
         {this.renderHistory(historicalData.data)}
       </div>
@@ -128,15 +154,23 @@ class Contract extends React.Component<ICombinedProps, IComponentState> {
     }));
 
     return (
-      <LineChart width={500} height={300} data={chartData}>
-        <XAxis dataKey='date' />
-        <YAxis />
-        <CartesianGrid stroke='#eee' strokeDasharray='5 5' />
-        <Legend verticalAlign='top' height={36} />
-        <Line name={translate(t => t.contract.contractSpeed)} type='monotone' dataKey='contractSpeed' stroke='#339966' />
-        <Line name={translate(t => t.contract.schoolReport)} type='monotone' dataKey='schoolSpeed' stroke='#8884d8' />
-        <Line name={translate(t => t.contract.ispReport)} type='monotone' dataKey='ispSpeed' stroke='#82ca9d' />
-      </LineChart>
+      <div className='mh-linechart'>
+        <h4>{translate(t => t.contract.speedOverTime)}</h4>
+        <div className='mh-linechart-content'>
+          <ResponsiveContainer minHeight={300}>
+            <LineChart data={chartData} >
+              <XAxis dataKey='date'/>
+              <YAxis />
+              <CartesianGrid stroke='#eee' strokeDasharray='5 5' />
+              <Legend verticalAlign='bottom' height={60} />
+              <ReferenceLine y={contract.speed} stroke='#f6009d' strokeDasharray='5 5' />
+              <Line name={translate(t => t.contract.contractSpeed)} type='monotone' dataKey='contractSpeed' stroke='#f6009d' dot={false} />
+              <Line name={translate(t => t.contract.schoolReport)} type='monotone' dataKey='schoolSpeed' stroke='#ffbe00' />
+              <Line name={translate(t => t.contract.ispReport)} type='monotone' dataKey='ispSpeed' stroke='#0072ff' />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
     );
   }
 
@@ -144,26 +178,30 @@ class Contract extends React.Component<ICombinedProps, IComponentState> {
     const { contract } = this.props;
 
     return (
-      <Table>
-        <Thead>
-          <Tr>
-            <Th>{translate(t => t.common.date)}</Th>
-            <Th>{translate(t => t.contract.schoolReport)} (MB/s)</Th>
-            <Th>{translate(t => t.contract.ispReport)} (MB/s)</Th>
-            <Th>{translate(t => t.contract.complience)}</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {entries.map(e => (
-            <Tr key={e.date.toString()}>
-              <Td>{moment(e.date).format('YYYY-MM-DD')}</Td>
-              <Td>{e.schoolSpeed}</Td>
-              <Td>{e.ispSpeed}</Td>
-              <Td>{this.renderComplience(contract.speed, e.schoolSpeed, e.ispSpeed)}</Td>
+      <div className='mh-history'>
+        <h4>{translate(t => t.contract.speedReportHistory)}</h4>
+
+        <Table>
+          <Thead>
+            <Tr>
+              <Th>{translate(t => t.common.date)}</Th>
+              <Th>{translate(t => t.contract.schoolReport)} (Mbps)</Th>
+              <Th>{translate(t => t.contract.ispReport)} (Mbps)</Th>
+              <Th>{translate(t => t.contract.complience)}</Th>
             </Tr>
-          ))}
-        </Tbody>
-      </Table>
+          </Thead>
+          <Tbody>
+            {entries.map(e => (
+              <Tr key={e.date.toString()}>
+                <Td>{moment(e.date).format('YYYY-MM-DD')}</Td>
+                <Td>{e.schoolSpeed === undefined ? '-' : e.schoolSpeed}</Td>
+                <Td>{e.ispSpeed === undefined ? '-' : e.ispSpeed}</Td>
+                <Td>{this.renderComplience(contract.speed, e.schoolSpeed, e.ispSpeed)}</Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      </div>
     );
   }
 
@@ -183,17 +221,19 @@ class Contract extends React.Component<ICombinedProps, IComponentState> {
 
     if (!isReportingOpen) {
       return (
-        <Button
-          type='button'
-          onClick={this.onReportSpeedExpandToggle}
-        >
-          {translate(t => t.contract.reportSpeed)}
-        </Button>
+        <div className='mh-speed-reporting'>
+          <Button
+            type='button'
+            onClick={this.onReportSpeedExpandToggle}
+          >
+            {translate(t => t.contract.reportSpeed)}
+          </Button>
+        </div>
       );
     }
 
     return (
-      <div>
+      <div className='mh-speed-reporting'>
         <h3
           onClick={this.onReportSpeedExpandToggle}
           className='mh-report-form-header'

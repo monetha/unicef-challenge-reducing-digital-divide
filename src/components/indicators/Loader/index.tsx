@@ -26,13 +26,18 @@ export class Loader extends React.PureComponent<IProps> {
           'mh-fullarea': fullArea,
         })}
       >
-        <div className='mh-spinner' />
+        <div className='mh-spinner'>
+          <div className='mh-spinner-contents'>
+            {message && (
+              <div className='mh-message'>
+                {message}
+              </div>
+            )}
 
-        {message && (
-          <div className='mh-message'>
-            {message}
+            <div className='mh-spinner-indicator'></div>
           </div>
-        )}
+        </div>
+
       </div>
     );
   }
