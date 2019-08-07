@@ -1,38 +1,67 @@
 import moment from 'moment';
-import { put, takeLatest } from 'redux-saga/effects';
-import { IAsyncAction } from 'src/core/redux/asyncAction';
-import { takeEveryLatest } from 'src/core/redux/saga';
+import { put, select, takeLatest } from 'redux-saga/effects';
+import { facts } from 'src/constants/facts';
+import { IAsyncAction, IAsyncState } from 'src/core/redux/asyncAction';
+import { putAndTakeAsync, takeEveryLatest } from 'src/core/redux/saga';
 import { getServices } from 'src/ioc/services';
-import { ContractState, IContract, IFactReportEntry } from 'src/models/contract';
+import { IContract, IFactReport, IFactReportEntry, ContractState } from 'src/models/contract';
+import { IISP } from 'src/models/isp';
 import { enableMetamask } from 'src/utils/metamask';
+import { FactReader, IHistoryEvent, PassportReader, FactWriter, PassportOwnership } from 'verifiable-data';
+import { loadISPs } from '../isp/action';
+import { IState } from '../rootReducer';
 import { createContract, IContractCreatePayload, ILoadReportingHistoryPayload, IReportFactPayload, loadContract, loadContracts, loadReportingHistory, reportFact } from './action';
+import { sendTx, waitReceipt } from 'src/utils/tx';
 
 // #region -------------- Contract loading -------------------------------------------------------------------
 
 function* onLoadContracts(action: IAsyncAction<void>) {
   try {
-    // TODO:
-    const contracts: IContract[] = [
-      {
-        id: '0',
-        schoolAddress: '0x123456789',
-        ispAddress: '0x123456789',
-        speed: 50,
-        state: ContractState.Active,
-        connectivityScore: 0.8,
-      },
-      {
-        id: '1',
-        schoolAddress: '0xabcdefabcdef',
-        ispAddress: '0xabcdefabcdef',
-        speed: 20,
-        state: ContractState.Active,
-        connectivityScore: 0.2,
-      },
-    ];
+    const { web3 } = getServices();
+    const passReader = new PassportReader(web3);
 
-    for (const contract of contracts) {
-      yield put(loadContract.success(contract, [contract.id]));
+    // Ensure all ISPs are loaded
+    yield putAndTakeAsync(loadISPs, a => a.init(null, { cacheTimeout: -1 }));
+
+    const isps = yield select((s: IState) => s.isp.loaded);
+
+    // Fetch contracts for each ISP
+    for (const ispAddress in isps) {
+      if (!isps.hasOwnProperty(ispAddress)) {
+        continue;
+      }
+
+      const ispState: IAsyncState<IISP> = isps[ispAddress];
+      if (!ispState || !ispState.data) {
+        continue;
+      }
+
+      const events: IHistoryEvent[] = yield passReader.readPassportHistory(ispState.data.passportAddress, {
+        key: facts.contractMetadata,
+      });
+
+      const factReader = new FactReader(web3, ispState.data.passportAddress);
+
+      for (const event of events) {
+        let jsonBytes: number[] = yield factReader.getTxdata(event.factProviderAddress, facts.contractMetadata);
+        if (!jsonBytes) {
+          continue;
+        }
+
+        const contract: IContract = JSON.parse(Buffer.from(jsonBytes).toString('utf8'));
+        contract.ispAddress = ispAddress;
+        contract.ispPassportAddress = ispState.data.passportAddress;
+        contract.schoolAddress = event.factProviderAddress;
+
+        // Try to fetch school report for this contract to get connectivity score
+        jsonBytes = yield factReader.getTxdata(event.factProviderAddress, `${facts.schoolReport}${contract.id}`);
+        if (jsonBytes) {
+          const factReport: IFactReport = JSON.parse(Buffer.from(jsonBytes).toString('utf8'));
+          contract.connectivityScore = factReport.connectivityScore;
+        }
+
+        yield put(loadContract.success(contract, [contract.id]));
+      }
     }
 
     yield put(loadContracts.success());
@@ -46,27 +75,40 @@ function* onLoadContracts(action: IAsyncAction<void>) {
   }
 }
 
-function* onLoadContract(action: IAsyncAction<string>) {
-  try {
-    // TODO:
-    const contract: IContract = {
-      id: action.payload,
-      schoolAddress: '0x123456789',
-      ispAddress: '0x123456789',
-      speed: 10,
-      state: ContractState.Active,
-      connectivityScore: 0.5,
-    };
+// function* onLoadContract(action: IAsyncAction<string>) {
+//   try {
+//     const { web3 } = getServices();
+//     const passReader = new PassportReader(web3);
 
-    yield put(loadContract.success(contract, action.subpath));
-  } catch (error) {
-    yield getServices().createErrorHandler(error)
-      .onAnyError(function* (friendlyError) {
-        yield put(loadContract.failure(friendlyError, action.payload, action.subpath));
-      })
-      .process();
-  }
-}
+//     let jsonBytes: number[] = yield factReader.getTxdata(event.factProviderAddress, facts.contractMetadata);
+//     if (!jsonBytes) {
+//       continue;
+//     }
+
+//     const contract: IContract = JSON.parse(Buffer.from(jsonBytes).toString('utf8'));
+//     contract.ispAddress = ispAddress;
+//     contract.schoolAddress = event.factProviderAddress;
+
+//     // Try to fetch school report for this contract to get connectivity score
+//     jsonBytes = yield factReader.getTxdata(event.factProviderAddress, `${facts.schoolReport}${contract.id}`);
+//     if (jsonBytes) {
+//       const factReport: IFactReport = JSON.parse(Buffer.from(jsonBytes).toString('utf8'));
+//       contract.connectivityScore = factReport.connectivityScore;
+//     }
+
+//     yield put(loadContract.success(contract, [contract.id]));
+
+//   }
+
+//     yield put(loadContract.success(contract, action.subpath));
+// } catch (error) {
+//   yield getServices().createErrorHandler(error)
+//     .onAnyError(function* (friendlyError) {
+//       yield put(loadContract.failure(friendlyError, action.payload, action.subpath));
+//     })
+//     .process();
+// }
+//}
 
 // #endregion
 
@@ -74,15 +116,31 @@ function* onLoadContract(action: IAsyncAction<string>) {
 
 function* onCreateContract(action: IAsyncAction<IContractCreatePayload>) {
   try {
-    // const { web3 } = getServices();
+    const { web3 } = getServices();
+    const { ispPassportAddress, schoolAddress, speed } = action.payload;
 
     yield enableMetamask();
 
-    // const writer = new FactWriter(web3, ispAddress);
-    // const txConfig = yield writer.setTxdata(facts.contractMetadata, /* serialized JSON */);
+    const writer = new FactWriter(web3, ispPassportAddress);
+    const contract: IContract = {
+      id: (window.performance.timing.navigationStart + window.performance.now()).toString(),
+      state: ContractState.Active,
+      schoolAddress,
+      speed,
+    };
 
-    // const txHash = yield sendTx(txConfig);
-    // yield waitReceipt(txHash);
+    const jsonBytes = Array.from(Buffer.from(JSON.stringify(contract), 'utf8'));
+    const txConfig = yield writer.setTxdata(facts.contractMetadata, jsonBytes, schoolAddress);
+
+    const txHash = yield sendTx(txConfig);
+    yield waitReceipt(txHash);
+
+    const ownership = new PassportOwnership(web3, ispPassportAddress);
+
+    contract.ispPassportAddress = action.payload.ispPassportAddress;
+    contract.ispAddress = yield ownership.getOwnerAddress();
+
+    yield put(loadContract.success(contract, [contract.id]));
 
     yield put(createContract.success(null, action.subpath));
   } catch (error) {
@@ -166,8 +224,8 @@ function* onLoadReportingHistory(action: IAsyncAction<ILoadReportingHistoryPaylo
 
 export const contractSaga = [
   takeLatest(loadContracts.request.type, onLoadContracts),
-  takeEveryLatest<IAsyncAction<string>, any>(
-    loadContract.request.type, a => `${a.type}_${a.payload}`, onLoadContract),
+  // takeEveryLatest<IAsyncAction<string>, any>(
+  //   loadContract.request.type, a => `${a.type}_${a.payload}`, onLoadContract),
   takeEveryLatest<IAsyncAction<IContractCreatePayload>, any>(
     createContract.request.type, a => `${a.type}_${a.payload.schoolAddress}`, onCreateContract),
   takeEveryLatest<IAsyncAction<IReportFactPayload>, any>(

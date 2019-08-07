@@ -228,9 +228,9 @@ const connected = connect<IStateProps, IDispatchProps, any, IState>(
   (dispatch) => {
     return {
       loadTree: () => {
-        dispatch(loadSchools.init());
-        dispatch(loadISPs.init());
-        dispatch(loadContracts.init());
+        dispatch(loadSchools.init(null, { cacheTimeout: -1 }));
+        dispatch(loadISPs.init(null, { cacheTimeout: -1 }));
+        dispatch(loadContracts.init(null, { cacheTimeout: -1 }));
       },
     };
   },

@@ -29,7 +29,7 @@ export const loadContract = createAsyncAction<string, IContract>(actionTypes.loa
 
 export interface IContractCreatePayload {
   schoolAddress: Address;
-  ispAddress: Address;
+  ispPassportAddress: Address;
   speed: number;
 }
 

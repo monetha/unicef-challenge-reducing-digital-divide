@@ -37,7 +37,7 @@ export interface IProps {
 }
 
 interface IFormValues {
-  ispAddress: Address;
+  ispPassportAddress: Address;
   speed: string;
 }
 
@@ -46,7 +46,7 @@ interface IFormValues {
 // #region -------------- Form validation schema -------------------------------------------------------------------
 
 const validationSchema = Yup.object().shape({
-  ispAddress: Yup.string()
+  ispPassportAddress: Yup.string()
     .required(translate(t => t.errors.required)),
   speed: Yup.number()
     .typeError(translate(t => t.errors.mustBeNumber))
@@ -65,7 +65,7 @@ class ContractForm extends React.PureComponent<ICombinedProps> {
     super(props);
 
     this.initialValues = {
-      ispAddress: '',
+      ispPassportAddress: '',
       speed: '',
     };
   }
@@ -96,12 +96,12 @@ class ContractForm extends React.PureComponent<ICombinedProps> {
     return (
       <Form>
         <FormikField
-          name='ispAddress'
+          name='ispPassportAddress'
         >
           <DropdownInput
-            name='ispAddress'
+            name='ispPassportAddress'
             onChange={handleChange}
-            value={values.ispAddress}
+            value={values.ispPassportAddress}
             placeholder='ISP'
             disabled={disabled}
             items={this.getISPOptions()}
@@ -143,7 +143,7 @@ class ContractForm extends React.PureComponent<ICombinedProps> {
       usedAddresses.add(isp.data.address);
 
       options.push({
-        value: isp.data.address,
+        value: isp.data.passportAddress,
         children: isp.data.name,
       });
     });
@@ -176,7 +176,7 @@ const connected = connect<IStateProps, IDispatchProps, IProps, IState>(
       createContract: (values: IFormValues) => {
         dispatch(createContract.init({
           schoolAddress: ownProps.school.address,
-          ispAddress: values.ispAddress,
+          ispPassportAddress: values.ispPassportAddress,
           speed: Number(values.speed),
         }));
       },

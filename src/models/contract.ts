@@ -5,7 +5,6 @@ import { Address } from 'verifiable-data';
  */
 export interface IContract {
   id: string;
-  ispAddress: Address;
   schoolAddress: Address;
 
   /**
@@ -13,7 +12,11 @@ export interface IContract {
    */
   speed: number;
   state: ContractState;
-  connectivityScore: number;
+
+  // Cache fields
+  ispAddress?: Address;
+  ispPassportAddress?: Address;
+  connectivityScore?: number;
 }
 
 export enum ContractState {
@@ -27,4 +30,9 @@ export interface IFactReportEntry {
   schoolAddress: Address;
   schoolSpeed: number;
   date: Date;
+}
+
+export interface IFactReport {
+  connectivityScore?: number;
+  speed: number;
 }

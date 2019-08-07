@@ -32,7 +32,7 @@ function* onLoadISPs(action: IAsyncAction<void>) {
       isp.address = passport.ownerAddress;
       isp.passportAddress = passport.passportAddress;
 
-      yield put(loadISP.success(isp, [isp.address]));
+      yield put(loadISP.success(isp, [isp.passportAddress]));
     }
 
     yield put(loadISPs.success());

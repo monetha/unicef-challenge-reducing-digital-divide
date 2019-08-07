@@ -30,7 +30,7 @@ interface IStateProps {
 }
 
 interface IDispatchProps {
-  loadISP(address: Address);
+  loadISP(passportAddress: Address);
   loadReportingHistory();
   reportSpeed(speed: number);
 }
@@ -62,7 +62,7 @@ class Contract extends React.Component<ICombinedProps, IComponentState> {
   public componentDidMount() {
     const { contract, loadISP: loadISPProp, loadReportingHistory: loadReportingHistoryProp } = this.props;
 
-    loadISPProp(contract.ispAddress);
+    loadISPProp(contract.ispPassportAddress);
     loadReportingHistoryProp();
   }
 
@@ -247,8 +247,8 @@ const connected = connect<IStateProps, IDispatchProps, IProps, IState>(
   },
   (dispatch, ownProps) => {
     return {
-      loadISP: (address: Address) => {
-        dispatch(loadISP.init(address, { cacheTimeout: -1 }));
+      loadISP: (passportAddress: Address) => {
+        dispatch(loadISP.init(passportAddress, { cacheTimeout: -1 }));
       },
       loadReportingHistory: () => {
         dispatch(loadReportingHistory.init({
