@@ -1,20 +1,9 @@
-import { IAsyncState, AsyncState } from 'src/core/redux/asyncAction';
+import { AsyncState, IAsyncState } from 'src/core/redux/asyncAction';
 import { createReducer, ReducerBuilder } from 'src/core/redux/ReducerBuilder';
 import { ISchool } from 'src/models/school';
-import { loadSchools, loadSchool, status } from './action';
+import { loadSchool, loadSchools, createSchool } from './action';
 
 // #region -------------- State -------------------------------------------------------------------
-
-export enum CreateSchoolStatuses {
-  CreatingSchool = 'Creating School',
-  SchoolCreated = 'School Created',
-}
-
-export interface ICreateSchoolStatus {
-  [schoolName: string]: {
-    status: CreateSchoolStatuses;
-  };
-}
 
 export interface ISchoolState {
 
@@ -28,13 +17,13 @@ export interface ISchoolState {
    */
   allLoadStatus: IAsyncState<void>;
 
-  status: IAsyncState<ICreateSchoolStatus>;
+  creationStatus: IAsyncState<void>;
 }
 
 const initialState: ISchoolState = {
   loaded: {},
   allLoadStatus: new AsyncState(),
-  status: new AsyncState(),
+  creationStatus: new AsyncState(),
 };
 
 // #endregion
@@ -44,7 +33,7 @@ const initialState: ISchoolState = {
 const builder = new ReducerBuilder<ISchoolState>()
   .addAsync(loadSchools, s => s.allLoadStatus)
   .addAsync(loadSchool, s => s.loaded, a => [a])
-  .addAsync(status, s => s.status);
+  .addAsync(createSchool, s => s.creationStatus);
 
 export const schoolReducer = createReducer(initialState, builder);
 

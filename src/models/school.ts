@@ -13,4 +13,5 @@ export interface ISchool {
   address?: Address;
   country: Country;
   score: number;
+  physicalAddress?: string;
 }

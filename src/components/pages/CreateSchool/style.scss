@@ -1,7 +1,11 @@
 @import "vars/index.scss";
 
 .mh-create-school-page {
-  .mh-dropdown-input {
+  .mh-form-wrapper {
+    position: relative;
+  }
+
+  .mh-button-wrapper {
     margin-bottom: 20px;
   }
 }

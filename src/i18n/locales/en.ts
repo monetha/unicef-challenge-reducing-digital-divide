@@ -67,6 +67,8 @@ const translations = validateBaseTranslations({
     contractComplience: 'Complience with the contract',
     creating: 'Adding school...',
     success: 'School has been successfully added',
+    enterName: 'Enter name...',
+    enterPhysicalAddress: 'Enter physical address...',
   },
   contract: {
     ispReport: 'ISP report',
