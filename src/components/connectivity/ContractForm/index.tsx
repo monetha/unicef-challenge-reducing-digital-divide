@@ -136,7 +136,10 @@ class ContractForm extends React.PureComponent<ICombinedProps> {
           />
         </FormikField>
 
-        <Button type='submit'>
+        <Button
+          type='submit'
+          disabled={disabled}
+        >
           {translate(t => t.common.submit)}
         </Button>
       </Form>

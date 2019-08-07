@@ -7,10 +7,9 @@ import SmoothCollapse from 'react-smooth-collapse';
 import { Content } from 'src/components/layout/Content';
 import { routes } from 'src/constants/routes';
 import { screenQuery } from 'src/constants/screen';
-import { createRouteUrl } from 'src/utils/nav';
-import { NetworkPicker } from '../NetworkPicker';
-import './style.scss';
 import { translate } from 'src/i18n';
+import { createRouteUrl } from 'src/utils/nav';
+import './style.scss';
 
 const logoImgUrl = require('src/assets/images/logo-white.svg');
 
@@ -82,7 +81,6 @@ class NavBar extends React.PureComponent<IProps, IState> {
           <div className='mh-nav-items-container'>
             {this.renderNavItems()}
           </div>
-          {this.renderNetworkPicker()}
         </Content>
       </MediaQuery>
     );
@@ -115,12 +113,6 @@ class NavBar extends React.PureComponent<IProps, IState> {
             <div className='mh-mobile-menu'>
               <SmoothCollapse expanded={this.state.isOpen}>
                 {this.renderNavItems(true)}
-
-                <div className='mh-navbar-item'>
-                  <Content>
-                    {this.renderNetworkPicker()}
-                  </Content>
-                </div>
               </SmoothCollapse>
             </div>
           </div>
@@ -223,16 +215,6 @@ class NavBar extends React.PureComponent<IProps, IState> {
     };
 
     return matchPath(url, routeProps) !== null;
-  }
-
-  // #endregion
-
-  // #region -------------- Network picker -------------------------------------------------------------------
-
-  private renderNetworkPicker() {
-    return (
-      <NetworkPicker />
-    );
   }
 
   // #endregion

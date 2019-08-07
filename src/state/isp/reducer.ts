@@ -1,7 +1,8 @@
-import { IAsyncState, AsyncState } from 'src/core/redux/asyncAction';
+import iassign from 'immutable-assign';
+import { AsyncState, IAsyncState } from 'src/core/redux/asyncAction';
 import { createReducer, ReducerBuilder } from 'src/core/redux/ReducerBuilder';
 import { IISP } from 'src/models/isp';
-import { loadISPs, loadISP, status } from './action';
+import { actionTypes, createISP, loadISP, loadISPs } from './action';
 
 // #region -------------- State -------------------------------------------------------------------
 
@@ -13,10 +14,8 @@ export enum CreateISPStatuses {
 }
 
 export interface ICreateISPStatus {
-  [ispName: string]: {
-    status: CreateISPStatuses;
-    identityAddress?: string;
-  };
+  status: CreateISPStatuses;
+  identityAddress?: string;
 }
 
 export interface IISPState {
@@ -31,13 +30,15 @@ export interface IISPState {
    */
   allLoadStatus: IAsyncState<void>;
 
-  status: IAsyncState<ICreateISPStatus>;
+  creationStatus: IAsyncState<void>;
+  creationProgress: ICreateISPStatus;
 }
 
 const initialState: IISPState = {
   loaded: {},
   allLoadStatus: new AsyncState(),
-  status: new AsyncState(),
+  creationStatus: new AsyncState(),
+  creationProgress: null,
 };
 
 // #endregion
@@ -47,7 +48,13 @@ const initialState: IISPState = {
 const builder = new ReducerBuilder<IISPState>()
   .addAsync(loadISPs, s => s.allLoadStatus)
   .addAsync(loadISP, s => s.loaded, a => [a])
-  .addAsync(status, s => s.status);
+  .addAsync(createISP, s => s.creationStatus)
+  .add(actionTypes.updateISPCreationStatus, (state, action) => {
+    return iassign(state, s => s, node => {
+      node.creationProgress = action.payload;
+      return node;
+    });
+  });
 
 export const ispReducer = createReducer(initialState, builder);
 

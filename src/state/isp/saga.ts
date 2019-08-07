@@ -8,7 +8,7 @@ import { IISP } from 'src/models/isp';
 import { getCurrentAccountAddress, enableMetamask } from 'src/utils/metamask';
 import { sendTx, waitReceipt } from 'src/utils/tx';
 import { Address, FactReader, FactWriter, IPassportRef, PassportGenerator, PassportOwnership, PassportReader } from 'verifiable-data';
-import { createISP, ICreateISPPayload, loadISP, loadISPs, status } from './action';
+import { createISP, ICreateISPPayload, loadISP, loadISPs, updateISPCreationStatus } from './action';
 import { CreateISPStatuses } from 'src/state/isp/reducer';
 
 // #region -------------- Loading -------------------------------------------------------------------
@@ -80,12 +80,10 @@ function* onCreateISP(action: IAsyncAction<ICreateISPPayload>) {
   try {
     const { name, score } = action.payload;
 
-    yield put(status.success({
-      [name]: {
-        status: CreateISPStatuses.CreatingPassport,
-        identityAddress: null,
-      },
-    }, action.subpath));
+    yield put(updateISPCreationStatus({
+      status: CreateISPStatuses.CreatingPassport,
+      identityAddress: null,
+    }));
 
     const { web3 } = getServices();
 
@@ -97,59 +95,47 @@ function* onCreateISP(action: IAsyncAction<ICreateISPPayload>) {
     let receipt;
     let passportAddress;
 
+    // Create new passport
     const generator = new PassportGenerator(web3, passportFactoryAddress);
     txConfig = yield generator.createPassport(ownerAddress);
-    console.log('generator.createPassport txConfig', txConfig);
 
     txHash = yield sendTx(txConfig);
     receipt = yield waitReceipt(txHash);
-    console.log('generator.createPassport receipt', receipt);
 
     passportAddress = PassportGenerator.getPassportAddressFromReceipt(receipt);
-    console.log('passportAddress', passportAddress);
 
-    yield put(status.success({
-      [name]: {
-        status: CreateISPStatuses.ClaimingOwnership,
-        identityAddress: passportAddress,
-      },
-    }, action.subpath));
+    // Claim ownership
+    yield put(updateISPCreationStatus({
+      status: CreateISPStatuses.ClaimingOwnership,
+      identityAddress: passportAddress,
+    }));
 
     const ownership = new PassportOwnership(web3, passportAddress);
     txConfig = yield ownership.claimOwnership(ownerAddress);
-    console.log('ownership.claimOwnership txConfig', txConfig);
 
     txHash = yield sendTx(txConfig);
     receipt = yield waitReceipt(txHash);
-    console.log('ownership.claimOwnership receipt', receipt);
 
-    const passportOwnerAddress = yield ownership.getOwnerAddress();
-    console.log('passportOwnerAddress', passportOwnerAddress);
-
-    yield put(status.success({
-      [name]: {
-        status: CreateISPStatuses.SubmittingMetadata,
-        identityAddress: passportAddress,
-      },
-    }, action.subpath));
+    // Write ISP metadata
+    yield put(updateISPCreationStatus({
+      status: CreateISPStatuses.SubmittingMetadata,
+      identityAddress: passportAddress,
+    }));
 
     const writer = new FactWriter(web3, passportAddress);
     const bytes = web3.utils.hexToBytes(web3.utils.toHex(JSON.stringify({
       name,
     })));
     txConfig = yield writer.setTxdata(facts.ispMetadata, bytes, ownerAddress);
-    console.log('writer.setTxdata txConfig', txConfig);
 
     txHash = yield sendTx(txConfig);
     receipt = yield waitReceipt(txHash);
-    console.log('writer.setTxdata receipt', receipt);
 
-    yield put(status.success({
-      [name]: {
-        status: CreateISPStatuses.MetadataSubmitted,
-        identityAddress: passportAddress,
-      },
-    }, action.subpath));
+    // Mark as finished
+    yield put(updateISPCreationStatus({
+      status: CreateISPStatuses.MetadataSubmitted,
+      identityAddress: passportAddress,
+    }));
 
     const isp: IISP = {
       address: passportAddress,
@@ -159,10 +145,6 @@ function* onCreateISP(action: IAsyncAction<ICreateISPPayload>) {
 
     yield put(createISP.success(isp, action.subpath));
   } catch (error) {
-    yield put(status.success({
-      [name]: null,
-    }, action.subpath));
-
     yield getServices().createErrorHandler(error)
       .onAnyError(function* (friendlyError) {
         yield put(createISP.failure(friendlyError, action.payload, action.subpath));

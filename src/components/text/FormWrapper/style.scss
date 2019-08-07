@@ -2,8 +2,25 @@
 
 .mh-form-wrapper {
   background-color: $colorBlue;
-  color: $colorWhite;
   padding: 25px 25px 18px 25px;
   border-radius: 7px;
   margin-bottom: $spaceBetweenComponentsMd;
+
+  .mh-page-title {
+    color: $colorWhite;
+  }
+
+  .mh-alert {
+    margin-bottom: 16px;
+  }
+
+  .mh-button-wrapper {
+    text-align: center;
+
+    .mh-btn {
+      background-color: white;
+      color: #0072ff;
+      overflow: hidden;
+    }
+  }
 }

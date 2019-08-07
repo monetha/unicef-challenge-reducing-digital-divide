@@ -1,76 +1,119 @@
+import { AsyncState } from 'core/redux/asyncAction';
+import { Form, Formik } from 'formik';
 import React from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
+import { Button } from 'src/components/form/Button';
+import { FormikField } from 'src/components/form/FormikField';
+import { TextInput } from 'src/components/form/TextInput';
+import { Alert, AlertType } from 'src/components/indicators/Alert';
+import { Loader } from 'src/components/indicators/Loader';
 import { Content, Size } from 'src/components/layout/Content';
 import { MainTemplate } from 'src/components/layout/MainTemplate';
-import { IState } from 'src/state/rootReducer';
-import './style.scss';
-import { translate } from 'src/i18n';
-import { Form, Formik } from 'formik';
 import { FormWrapper } from 'src/components/text/FormWrapper';
-import { TextInput } from 'src/components/form/TextInput';
-import { Button } from 'src/components/form/Button';
+import { translate } from 'src/i18n';
 import { createISP } from 'src/state/isp/action';
-import { ICreateISPStatus, CreateISPStatuses } from 'src/state/isp/reducer';
-import { AsyncState } from 'core/redux/asyncAction';
-import { getEtherscanUrl } from 'src/utils/address';
+import { CreateISPStatuses, ICreateISPStatus } from 'src/state/isp/reducer';
+import { IState } from 'src/state/rootReducer';
+import { getPassportScannerUrl } from 'src/utils/address';
+import * as Yup from 'yup';
+import './style.scss';
 
 // #region -------------- Interfaces --------------------------------------------------------------
 
-interface IInitialValues {
+interface IFormValues {
   name: string;
 }
 
 interface IDispatchProps {
-  onSubmit(values: IInitialValues);
+  onSubmit(values: IFormValues);
 }
 
 interface IStateProps {
-  status: AsyncState<ICreateISPStatus>;
+  status: AsyncState<void>;
+  progress: ICreateISPStatus;
 }
 
-interface IProps extends RouteComponentProps<any>, IDispatchProps, IStateProps {
-  status: AsyncState<ICreateISPStatus>;
+interface ICombinedProps extends RouteComponentProps<any>, IDispatchProps, IStateProps {
 }
+
+// #endregion
+
+// #region -------------- Form validation schema -------------------------------------------------------------------
+
+const validationSchema = Yup.object().shape({
+  name: Yup.string()
+    .required(translate(t => t.errors.required)),
+});
 
 // #endregion
 
 // #region -------------- Component ---------------------------------------------------------------
 
-class CreateISPPage extends React.Component<IProps> {
-  private readonly initialValues: IInitialValues = {
+class CreateISPPage extends React.Component<ICombinedProps> {
+  private readonly initialValues: IFormValues = {
     name: '',
   };
 
-  private renderForm = ({ handleChange, values }) => {
+  private showAlertsSince = new Date();
+  private resetForm: () => any;
+
+  public componentDidUpdate(prevProps: ICombinedProps) {
+
+    // Check if form was just submitted successfully. If yes - reset form
     const { status } = this.props;
-    let statusText = '';
-    let statusId: CreateISPStatuses;
-    let url = '';
-    let identityAddress = '';
-    if (status.isFetched && status.data[values.name] !== undefined) {
-      if (status.data[values.name].status) {
-        statusId = status.data[values.name].status;
-        statusText = getStatusText(statusId);
-      }
-      if (status.data[values.name].identityAddress) {
-        identityAddress = status.data[values.name].identityAddress;
-        url = getEtherscanUrl(identityAddress);
+    if (status && !status.isFetching && status.isFetched && !status.error &&
+      (!prevProps.status || prevProps.status.isFetching)) {
+
+      if (this.resetForm) {
+        this.resetForm();
       }
     }
-    const disabled = statusId === CreateISPStatuses.CreatingPassport ||
-      statusId === CreateISPStatuses.ClaimingOwnership ||
-      statusId === CreateISPStatuses.SubmittingMetadata;
+  }
+
+  public render() {
+    return (
+      <MainTemplate className='mh-create-isp-page'>
+        <Content size={Size.Md}>
+          <FormWrapper header={translate(t => t.nav.createISP)}>
+            {this.renderError()}
+            {this.renderSuccess()}
+            {this.renderLoader()}
+
+            <Formik<IFormValues>
+              initialValues={this.initialValues}
+              onSubmit={this.props.onSubmit}
+              validationSchema={validationSchema}
+              validateOnChange
+            >
+              {this.renderForm}
+            </Formik>
+          </FormWrapper>
+        </Content>
+      </MainTemplate>
+    );
+  }
+
+  private renderForm = ({ handleChange, values, resetForm }) => {
+    const { status } = this.props;
+    this.resetForm = resetForm;
+
+    const disabled = status && status.isFetching;
 
     return (
       <Form>
-        <h1 style={{ color: 'red' }}>{statusText}</h1>
-        <TextInput
+        <FormikField
           name='name'
-          onChange={handleChange}
-          value={values.name}
-          placeholder=''
-        />
+        >
+          <TextInput
+            name='name'
+            onChange={handleChange}
+            value={values.name}
+            placeholder={translate(t => t.isp.enterName)}
+            disabled={disabled}
+          />
+        </FormikField>
+
         <div className='mh-button-wrapper'>
           <Button
             type='submit'
@@ -79,29 +122,66 @@ class CreateISPPage extends React.Component<IProps> {
             {translate(t => t.nav.createISP)}
           </Button>
         </div>
-        {identityAddress && url &&
-        <div className='identity-address'>
-          <span className='identity-created'>{`${translate(t => t.isp.identityCreated)}: `}</span>
-          <a href={url} target='_blank'>{identityAddress}</a>
-        </div>}
       </Form>
     );
   }
 
-  public render() {
+  private renderLoader() {
+    const { status, progress } = this.props;
+    const isLoading = status && status.isFetching;
+
+    if (!isLoading) {
+      return null;
+    }
+
     return (
-      <MainTemplate className='mh-create-isp-page'>
-        <Content size={Size.Md}>
-          <FormWrapper header={translate(t => t.nav.createISP)}>
-            <Formik<IInitialValues>
-              initialValues={this.initialValues}
-              onSubmit={this.props.onSubmit}
-            >
-              {this.renderForm}
-            </Formik>
-          </FormWrapper>
-        </Content>
-      </MainTemplate>
+      <Loader
+        fullArea={true}
+        message={progress && getStatusText(progress.status)}
+      />
+    );
+  }
+
+  private renderError() {
+    const { status } = this.props;
+    if (!status || status.isFetching || !status.error) {
+      return null;
+    }
+
+    if (status.errorTimestamp < this.showAlertsSince) {
+      return null;
+    }
+
+    return (
+      <Alert type={AlertType.Error}>
+        {status.error.friendlyMessage}
+      </Alert>
+    );
+  }
+
+  private renderSuccess() {
+    const { status, progress } = this.props;
+    if (!status || status.isFetching || !status.isFetched || status.error ||
+      !progress || !progress.identityAddress) {
+      return null;
+    }
+
+    if (status.timestamp < this.showAlertsSince) {
+      return null;
+    }
+
+    return (
+      <Alert type={AlertType.Success}>
+        {translate(t => t.isp.success)}
+        <div>
+          <a
+            href={getPassportScannerUrl(progress.identityAddress)}
+            target='_blank'
+          >
+            {progress.identityAddress}
+          </a>
+        </div>
+      </Alert>
     );
   }
 }
@@ -133,12 +213,13 @@ const getStatusText = (status: CreateISPStatuses): string => {
 const connected = connect<IStateProps, IDispatchProps, RouteComponentProps<any>, IState>(
   (state: IState) => {
     return {
-      status: state.isp.status,
+      status: state.isp.creationStatus,
+      progress: state.isp.creationProgress,
     };
   },
   dispatch => {
     return {
-      onSubmit(values: IInitialValues) {
+      onSubmit(values: IFormValues) {
         dispatch(createISP.init({
           name: values.name,
           score: 0.6,
