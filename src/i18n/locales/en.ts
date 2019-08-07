@@ -72,6 +72,7 @@ const translations = validateBaseTranslations({
     factualSpeed: 'Factual speed',
     speedOverTime: 'Speed over time',
     speedReportHistory: 'Speed report history',
+    selectIsp: 'Select ISP...',
   },
   isp: {
     address: 'ISP address',

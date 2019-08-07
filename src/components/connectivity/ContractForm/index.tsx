@@ -16,6 +16,8 @@ import { DropdownInput } from 'src/components/form/DropdownInput';
 import { loadISPs } from 'src/state/isp/action';
 import { IISP } from 'src/models/isp';
 import forEach from 'lodash/forEach';
+import { Loader } from 'src/components/indicators/Loader';
+import { Alert, AlertType } from 'src/components/indicators/Alert';
 
 // #region -------------- Interfaces --------------------------------------------------------------
 
@@ -60,6 +62,7 @@ const validationSchema = Yup.object().shape({
 
 class ContractForm extends React.PureComponent<ICombinedProps> {
   private initialValues: IFormValues;
+  private showErrorsSince = new Date();
 
   public constructor(props) {
     super(props);
@@ -75,8 +78,20 @@ class ContractForm extends React.PureComponent<ICombinedProps> {
   }
 
   public render() {
+    const { creationStatus } = this.props;
+    const isLoading = creationStatus && creationStatus.isFetching;
+
     return (
       <div className='mh-contract-form'>
+        {isLoading && (
+          <Loader
+            fullArea={true}
+            message={translate(t => t.common.txExecutionInProgress)}
+          />
+        )}
+
+        {this.renderError()}
+
         <Formik<IFormValues>
           initialValues={this.initialValues}
           onSubmit={this.props.createContract}
@@ -104,7 +119,7 @@ class ContractForm extends React.PureComponent<ICombinedProps> {
             value={values.ispPassportAddress}
             placeholder='ISP'
             disabled={disabled}
-            items={this.getISPOptions()}
+            items={this.getISPOptions(values.ispPassportAddress)}
           />
 
         </FormikField>
@@ -128,10 +143,34 @@ class ContractForm extends React.PureComponent<ICombinedProps> {
     );
   }
 
-  private getISPOptions = (): React.DetailedHTMLProps<React.OptionHTMLAttributes<HTMLOptionElement>, HTMLOptionElement>[] => {
+  private renderError() {
+    const { creationStatus } = this.props;
+    if (!creationStatus || creationStatus.isFetching || !creationStatus.error) {
+      return null;
+    }
+
+    if (creationStatus.errorTimestamp < this.showErrorsSince) {
+      return null;
+    }
+
+    return (
+      <Alert type={AlertType.Error}>
+        {creationStatus.error.friendlyMessage}
+      </Alert>
+    );
+  }
+
+  private getISPOptions = (currentIspValue: string): React.DetailedHTMLProps<React.OptionHTMLAttributes<HTMLOptionElement>, HTMLOptionElement>[] => {
     const { isps } = this.props;
 
     const options: React.DetailedHTMLProps<React.OptionHTMLAttributes<HTMLOptionElement>, HTMLOptionElement>[] = [];
+
+    if (!currentIspValue) {
+      options.push({
+        value: '',
+        children: translate(t => t.contract.selectIsp),
+      });
+    }
 
     const usedAddresses = new Set<Address>();
 
