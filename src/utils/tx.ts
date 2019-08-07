@@ -1,6 +1,9 @@
 import { TransactionConfig, TransactionReceipt } from 'web3-core';
 import { enableMetamask, sendTransaction, getMetamaskEthereumInstance } from './metamask';
 import { convertCallbackToPromise } from './promise';
+import { Block } from 'web3-eth';
+import Web3 from 'web3';
+import moment from 'moment';
 
 export async function sendTx(txConfig: TransactionConfig) {
   await enableMetamask();
@@ -39,3 +42,8 @@ export const waitReceipt = async (txHash: string): Promise<TransactionReceipt> =
 
   throw new Error('Failed to get receipt after 50 retries');
 };
+
+export async function getBlockDate(web3: Web3, blockNr: number) {
+  const block: Block = await web3.eth.getBlock(blockNr);
+  return moment(new Date(Number(block.timestamp) * 1000));
+}

@@ -235,7 +235,7 @@ const connected = connect<IStateProps, IDispatchProps, IProps, IState>(
     const { loaded } = state.isp;
     const { factReportingHistory, factReportingStatus } = state.contract;
 
-    const isp = loaded[ownProps.contract.ispAddress];
+    const isp = loaded[ownProps.contract.ispPassportAddress];
     const historicalData = factReportingHistory[ownProps.contract.id];
     const reportSpeedStatus = factReportingStatus[ownProps.contract.id];
 
@@ -252,7 +252,7 @@ const connected = connect<IStateProps, IDispatchProps, IProps, IState>(
       },
       loadReportingHistory: () => {
         dispatch(loadReportingHistory.init({
-          contractId: ownProps.contract.id,
+          contract: ownProps.contract,
         }, { cacheTimeout: -1 }));
       },
       reportSpeed: (speed: number) => {

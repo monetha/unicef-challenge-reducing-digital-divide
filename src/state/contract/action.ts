@@ -47,7 +47,7 @@ export interface IReportFactPayload {
 export const reportFact = createAsyncAction<IReportFactPayload, void>(actionTypes.reportFact);
 
 export interface ILoadReportingHistoryPayload {
-  contractId: string;
+  contract: IContract;
 }
 
 export const loadReportingHistory = createAsyncAction<ILoadReportingHistoryPayload, IFactReportEntry[]>(actionTypes.loadReportingHistory);
