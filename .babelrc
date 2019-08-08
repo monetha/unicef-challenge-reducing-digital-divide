@@ -18,7 +18,7 @@
   "env": {
     "production": {
       "only": [
-        "app"
+        "src"
       ],
       "plugins": [
         "transform-react-constant-elements",
