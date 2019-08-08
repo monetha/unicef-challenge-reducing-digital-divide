@@ -128,3 +128,6 @@ and dev version of app will be served at http://localhost:3000
 - Improve usability by allowing to use other crypto wallets: MEW, Opera Wallet, Metamask Mobile Wallet.
 - Schools can as well create digital identities for participation in other Unicef projects.
 - An additional layer for indexing the stored data is needed in order to increase performance of the overview.
+- With minor adjustments app could be used with Quorum's, Pantheon's, etc. private transactions since `verifiable-data` already supports them.
+- Add filter/search for countries, schools
+- Ability to submit transactions without Metamask by keeping encrypted private keys internally and unlocking them by entering custom user password before every submission.
