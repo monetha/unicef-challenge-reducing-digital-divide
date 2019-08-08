@@ -79,11 +79,20 @@ An ethereum account that is providing data to an ISP and Unicef. School register
 
 ![alt text](https://raw.githubusercontent.com/monetha/unicef-challenge-reducing-digital-divide/master/img/agreement_1.jpg)
 
+### Internet speed provisioning
+
+1. 
+
+![alt text](https://raw.githubusercontent.com/monetha/unicef-challenge-reducing-digital-divide/master/img/report_speed_1.jpg)
+
 2. 
 
-![alt text](https://raw.githubusercontent.com/monetha/unicef-challenge-reducing-digital-divide/master/img/agreement_2.jpg)
+![alt text](https://raw.githubusercontent.com/monetha/unicef-challenge-reducing-digital-divide/master/img/report_speed_2.jpg)
 
-### Internet speed provisioning
+3. 
+
+![alt text](https://raw.githubusercontent.com/monetha/unicef-challenge-reducing-digital-divide/master/img/report_speed_3.jpg)
+
 
 ## Setup and installation
 
