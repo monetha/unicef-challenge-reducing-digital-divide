@@ -47,23 +47,23 @@ An ethereum account that is providing data to an ISP and Unicef. School register
 
 ### Registering an ISP
 
-1.
+1. Enter unique ISP name.
 
 ![alt text](https://raw.githubusercontent.com/monetha/unicef-challenge-reducing-digital-divide/master/img/isp_1.jpg)
 
-2. 
+2. Confirm transaction and close metamask
 
 ![alt text](https://raw.githubusercontent.com/monetha/unicef-challenge-reducing-digital-divide/master/img/isp_2.jpg)
 
-3. 
+3. New metamask window will popup to claim identity ownership
 
 ![alt text](https://raw.githubusercontent.com/monetha/unicef-challenge-reducing-digital-divide/master/img/isp_3.jpg)
 
-4. 
+4. The last step is to submit metadata
 
 ![alt text](https://raw.githubusercontent.com/monetha/unicef-challenge-reducing-digital-divide/master/img/isp_4.jpg)
 
-5. 
+5. ISP successfully registered
 
 ![alt text](https://raw.githubusercontent.com/monetha/unicef-challenge-reducing-digital-divide/master/img/isp_5.jpg)
 
