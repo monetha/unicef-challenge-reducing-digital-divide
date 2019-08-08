@@ -3,7 +3,7 @@ import './style.scss';
 import { Content } from 'src/components/layout/Content';
 import { translate } from 'src/i18n';
 
-const logoImgUrl = require('src/assets/images/logo-white.svg');
+const logoImgUrl = require('src/assets/images/unicef-logo.svg');
 
 // #region -------------- Interfaces --------------------------------------------------------------
 
@@ -20,13 +20,15 @@ export const Footer: React.SFC<IProps> = () => {
       <Content>
         <div className='mh-footer-info'>
           <div className='mh-logo'>
-            <a href='https://www.monetha.io'>
+            <a href='https://www.unicef.org' target='_blank'>
               <img src={logoImgUrl} />
             </a>
           </div>
 
           <div className='mh-copyright'>
-            {translate(t => t.footer.copyright)}
+            <a href='https://www.monetha.io' target='_blank'>
+              {translate(t => t.footer.copyright)}
+            </a>
           </div>
         </div>
       </Content>

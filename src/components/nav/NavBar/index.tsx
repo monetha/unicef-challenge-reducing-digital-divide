@@ -11,7 +11,7 @@ import { translate } from 'src/i18n';
 import { createRouteUrl } from 'src/utils/nav';
 import './style.scss';
 
-const logoImgUrl = require('src/assets/images/logo-white.svg');
+const logoImgUrl = require('src/assets/images/unicef-logo.svg');
 
 const MenuImg = require('!babel-loader!react-svg-loader?!images/menu.svg').default;
 

@@ -13,6 +13,14 @@
 
     .mh-copyright {
       margin-top: $spaceBetweenComponentsXxs;
+
+      a {
+        color: $colorWhite;
+
+        &:hover {
+          color: rgba($colorWhite, 0.7);
+        }
+      }
     }
   }
 

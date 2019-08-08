@@ -44,7 +44,7 @@ const translations = validateBaseTranslations({
     createISP: 'Create ISP',
   },
   footer: {
-    copyright: '© 2019 Monetha. All rights reserved.',
+    copyright: 'Powered by Monetha Platform © 2019 Monetha',
   },
   pages: {
     overview: {
