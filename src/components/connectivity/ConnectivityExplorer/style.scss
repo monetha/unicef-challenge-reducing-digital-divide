@@ -37,6 +37,23 @@
     }
   }
 
+  .mh-status-percentage {
+    color: $colorGray;
+    padding-left: 7px;
+
+    &.mh-green {
+      color: $colorGreen;
+    }
+
+    &.mh-yellow {
+      color: $colorYellow;
+    }
+
+    &.mh-red {
+      color: $colorRed;
+    }
+  }
+
   .mh-school-node-contents {
     margin-top: 10px;
     margin-bottom: 15px;

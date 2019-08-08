@@ -141,10 +141,16 @@ class ConnectivityExplorer extends React.Component<IProps, IComponentState> {
   private renderHeader(text: string, indicatorScore: number) {
     const colorClass = getColorClassByScore(indicatorScore);
 
+    let percentage: number = null;
+    if (indicatorScore !== null && indicatorScore !== undefined) {
+      percentage = Math.round(indicatorScore * 100);
+    }
+
     return (
       <div className='mh-tree-item-header'>
         <div className='mh-header-text'>{text}</div>
         <div className={classnames('mh-status-indicator', colorClass)}></div>
+        <div className={classnames('mh-status-percentage', colorClass)}>{percentage || 0}%</div>
       </div>
     );
   }
