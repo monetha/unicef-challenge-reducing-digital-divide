@@ -69,6 +69,7 @@ App will be running at [http://localhost:3000](http://localhost:3000) and use Ro
 
 - Add more metadata for Schools in order to be able to use data on maps as per [http://school-mapping.azurewebsites.net/](http://school-mapping.azurewebsites.net/) project.
 - Add signed agreements contracts to ISP digital identity and store them securely as per Monetha platform documentation of [private data storage](https://github.com/monetha/js-verifiable-data#Private-data) with a possibility to expose data via [private data exchange](https://github.com/monetha/js-verifiable-data#Private-data-exchange).
-- Automate speed registration via scheduled job running on School's or ISP machine. It can be prepared leveraging Monetha Platform SDKs either [Nodejs](github.com/monetha/js-verifiable-data) or [Golang](https://github.com/monetha/go-verifiable-data)
+- Automate speed registration via scheduled job running on School's or ISP machine or even directly from IoT devices. It can be prepared leveraging Monetha Platform SDKs either [Nodejs](github.com/monetha/js-verifiable-data) or [Golang](https://github.com/monetha/go-verifiable-data)
 - Improve usability by allowing to use other crypto wallets: MEW, Opera Wallet, Metamask Mobile Wallet.
 - Schools can as well create digital identities for participation in other Unicef projects.
+- An additional layer for indexing the stored data is needed in order to increase performance of the overview.
