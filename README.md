@@ -45,54 +45,7 @@ An ethereum account that is providing data to an ISP and Unicef. School register
 
 ## Usage
 
-### Registering an ISP
-
-1. Enter unique ISP name.
-
-![alt text](https://raw.githubusercontent.com/monetha/unicef-challenge-reducing-digital-divide/master/img/isp_1.jpg)
-
-2. Confirm transaction and close metamask
-
-![alt text](https://raw.githubusercontent.com/monetha/unicef-challenge-reducing-digital-divide/master/img/isp_2.jpg)
-
-3. New metamask window will popup to claim identity ownership
-
-![alt text](https://raw.githubusercontent.com/monetha/unicef-challenge-reducing-digital-divide/master/img/isp_3.jpg)
-
-4. The last step is to submit metadata
-
-![alt text](https://raw.githubusercontent.com/monetha/unicef-challenge-reducing-digital-divide/master/img/isp_4.jpg)
-
-5. ISP successfully registered
-
-![alt text](https://raw.githubusercontent.com/monetha/unicef-challenge-reducing-digital-divide/master/img/isp_5.jpg)
-
-### Registering a School
-
-1. Enter school name, select country and enter school physical address.
-
-![alt text](https://raw.githubusercontent.com/monetha/unicef-challenge-reducing-digital-divide/master/img/school_1.jpg)
-
-### Registering an agreement between School and ISP
-
-1. Select ISP from the list and provide internet speed value from legal agreement. Note: Agreement can be registered only from scool address.
-
-![alt text](https://raw.githubusercontent.com/monetha/unicef-challenge-reducing-digital-divide/master/img/agreement_1.jpg)
-
-### Internet speed provisioning
-
-1. Select school from list and press `Report speed` button.
-
-![alt text](https://raw.githubusercontent.com/monetha/unicef-challenge-reducing-digital-divide/master/img/report_speed_1.jpg)
-
-2. Provide internet speed information and submit transaction in metamask. Note: internet speed can be provisioned only from school or ISP address.
-
-![alt text](https://raw.githubusercontent.com/monetha/unicef-challenge-reducing-digital-divide/master/img/report_speed_2.jpg)
-
-3. See provided details in reported dashboard
-
-![alt text](https://raw.githubusercontent.com/monetha/unicef-challenge-reducing-digital-divide/master/img/report_speed_3.jpg)
-
+A guide on what operations are available and how to use them can be found [GUIDE.md](GUIDE.md)
 
 ## Setup and installation
 
