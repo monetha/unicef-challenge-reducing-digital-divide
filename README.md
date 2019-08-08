@@ -69,6 +69,15 @@ An ethereum account that is providing data to an ISP and Unicef. School register
 
 ### Registering a School
 
+1. 
+
+![alt text](https://raw.githubusercontent.com/monetha/unicef-challenge-reducing-digital-divide/master/img/school_1.jpg)
+
+2. 
+
+![alt text](https://raw.githubusercontent.com/monetha/unicef-challenge-reducing-digital-divide/master/img/school_2.jpg)
+
+
 ### Registering an agreement between School and ISP
 
 ### Internet speed provisioning
