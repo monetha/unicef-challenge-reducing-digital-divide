@@ -49,6 +49,13 @@ const translations = validateBaseTranslations({
   pages: {
     overview: {
       title: 'Connectivity overview',
+      description: 'TODO: description',
+    },
+    createISP: {
+      description: 'TODO: description',
+    },
+    createSchool: {
+      description: 'TODO: description',
     },
   },
   form: {

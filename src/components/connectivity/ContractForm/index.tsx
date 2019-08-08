@@ -178,11 +178,11 @@ class ContractForm extends React.PureComponent<ICombinedProps> {
     const usedAddresses = new Set<Address>();
 
     forEach(isps, isp => {
-      if (!isp || !isp.data || usedAddresses.has(isp.data.address)) {
+      if (!isp || !isp.data || usedAddresses.has(isp.data.passportAddress)) {
         return;
       }
 
-      usedAddresses.add(isp.data.address);
+      usedAddresses.add(isp.data.passportAddress);
 
       options.push({
         value: isp.data.passportAddress,

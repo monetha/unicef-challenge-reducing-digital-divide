@@ -18,6 +18,7 @@ import * as Yup from 'yup';
 import { FormikField } from 'src/components/form/FormikField';
 import { Loader } from 'src/components/indicators/Loader';
 import { Alert, AlertType } from 'src/components/indicators/Alert';
+import { Description } from 'src/components/text/Description';
 
 // #region -------------- Interfaces --------------------------------------------------------------
 
@@ -98,6 +99,10 @@ class CreateSchoolPage extends React.Component<ICombinedProps> {
     return (
       <MainTemplate className='mh-create-school-page'>
         <Content size={Size.Md}>
+          <Description>
+            {translate(t => t.pages.createSchool.description)}
+          </Description>
+
           <FormWrapper header={translate(t => t.nav.createSchool)}>
             {this.renderError()}
             {this.renderSuccess()}

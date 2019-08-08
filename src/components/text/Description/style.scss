@@ -1,0 +1,11 @@
+@import "vars/index.scss";
+
+.mh-description {
+  font-size: 20px;
+  font-family: $fontFamilyLight;
+  word-break: break-word;
+  word-wrap: break-word;
+  color: $colorGrayB1;
+  white-space: pre-line;
+  padding-bottom: $spaceBetweenComponentsXs;
+}
