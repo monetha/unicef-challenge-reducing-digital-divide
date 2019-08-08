@@ -75,7 +75,7 @@ An ethereum account that is providing data to an ISP and Unicef. School register
 
 ### Registering an agreement between School and ISP
 
-1. 
+1. Select ISP from the list and provide internet speed value from legal agreement. Note: Agreement can be registered only from scool address.
 
 ![alt text](https://raw.githubusercontent.com/monetha/unicef-challenge-reducing-digital-divide/master/img/agreement_1.jpg)
 
@@ -85,7 +85,7 @@ An ethereum account that is providing data to an ISP and Unicef. School register
 
 ![alt text](https://raw.githubusercontent.com/monetha/unicef-challenge-reducing-digital-divide/master/img/report_speed_1.jpg)
 
-2. Provide internet speed information and submit transaction in metamask.
+2. Provide internet speed information and submit transaction in metamask. Note: internet speed can be provisioned only from school or ISP address.
 
 ![alt text](https://raw.githubusercontent.com/monetha/unicef-challenge-reducing-digital-divide/master/img/report_speed_2.jpg)
 
