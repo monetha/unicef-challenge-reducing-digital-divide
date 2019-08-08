@@ -39,12 +39,14 @@ interface ICountryConnectivity {
   code: Country;
   connectivityScore?: number;
   schools: ISchoolConnectivity[];
+  currentSpeed?: number;
 }
 
 interface ISchoolConnectivity {
   data: ISchool;
   connectivityScore?: number;
   contract?: IContract;
+  currentSpeed?: number;
 }
 
 interface IStateProps {
@@ -107,7 +109,7 @@ class ConnectivityExplorer extends React.Component<IProps, IComponentState> {
   private renderCountry(country: ICountryConnectivity) {
     return (
       <Collapsible
-        header={this.renderHeader(translate(t => t.countries[country.code]), country.connectivityScore)}
+        header={this.renderHeader(translate(t => t.countries[country.code]), country.connectivityScore, country.currentSpeed)}
       >
         {country.schools.map(s => (
           <Fragment key={s.data.address}>
@@ -123,7 +125,7 @@ class ConnectivityExplorer extends React.Component<IProps, IComponentState> {
 
     return (
       <Collapsible
-        header={this.renderHeader(school.data.name, school.connectivityScore)}
+        header={this.renderHeader(school.data.name, school.connectivityScore, school.currentSpeed)}
       >
         <div className={classnames('mh-school-node-contents', colorClass)}>
           <h2>{school.data.name}</h2>
@@ -138,7 +140,7 @@ class ConnectivityExplorer extends React.Component<IProps, IComponentState> {
     );
   }
 
-  private renderHeader(text: string, indicatorScore: number) {
+  private renderHeader(text: string, indicatorScore: number, speed: number) {
     const colorClass = getColorClassByScore(indicatorScore);
 
     let percentage: number = null;
@@ -146,11 +148,16 @@ class ConnectivityExplorer extends React.Component<IProps, IComponentState> {
       percentage = Math.round(indicatorScore * 100);
     }
 
+    let formattedSpeed: number = null;
+    if (speed !== null && speed !== undefined) {
+      formattedSpeed = Math.round(speed * 100) / 100;
+    }
+
     return (
       <div className='mh-tree-item-header'>
         <div className='mh-header-text'>{text}</div>
         <div className={classnames('mh-status-indicator', colorClass)}></div>
-        <div className={classnames('mh-status-percentage', colorClass)}>{percentage || 0}%</div>
+        <div className={classnames('mh-status-percentage', colorClass)}>{percentage || 0}% <b>({formattedSpeed || 0} Mbps)</b></div>
       </div>
     );
   }
@@ -279,6 +286,7 @@ const createTree = memoizeOne((schoolState: ISchoolState, contractState: IContra
     }
 
     let countryScoreSum = 0;
+    let countrySpeedSum = 0;
     const schoolsConnectivity: ISchoolConnectivity[] = [];
     const schools = schoolsByCountries[country];
 
@@ -292,10 +300,15 @@ const createTree = memoizeOne((schoolState: ISchoolState, contractState: IContra
         connectivityScore: contract && contract.data.connectivityScore,
         contract: contract && contract.data,
         data: school,
+        currentSpeed: contract && contract.data.currentSpeed,
       };
 
       if (schoolConnectivity.connectivityScore) {
         countryScoreSum += schoolConnectivity.connectivityScore;
+      }
+
+      if (schoolConnectivity.currentSpeed) {
+        countrySpeedSum += schoolConnectivity.currentSpeed;
       }
 
       schoolsConnectivity.push(schoolConnectivity);
@@ -304,6 +317,7 @@ const createTree = memoizeOne((schoolState: ISchoolState, contractState: IContra
     tree.countries.push({
       code: country as Country,
       connectivityScore: countryScoreSum / schools.length,
+      currentSpeed: countrySpeedSum / schools.length,
       schools: schoolsConnectivity,
     });
   }

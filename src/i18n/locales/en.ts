@@ -64,7 +64,7 @@ const translations = validateBaseTranslations({
     noContract: 'School has no contract with any ISP',
     contractWith: 'Contract with',
     minSpeed: 'Ensured minimum speed',
-    contractComplience: 'Complience with the contract',
+    contractComplience: 'Compliance with the contract',
     creating: 'Adding school...',
     success: 'School has been successfully added',
     enterName: 'Enter name...',

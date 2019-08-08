@@ -17,6 +17,7 @@ export interface IContract {
   ispAddress?: Address;
   ispPassportAddress?: Address;
   connectivityScore?: number;
+  currentSpeed?: number;
   date?: Date;
 }
 

@@ -64,6 +64,7 @@ function* onLoadContracts(action: IAsyncAction<void>) {
         if (jsonBytes) {
           const factReport: IFactReport = JSON.parse(Buffer.from(jsonBytes).toString('utf8'));
           contract.connectivityScore = factReport.connectivityScore;
+          contract.currentSpeed = factReport.speed;
         }
 
         yield put(loadContract.success(contract, [contract.id]));
@@ -105,6 +106,7 @@ function* onLoadContract(action: IAsyncAction<ILoadContractPayload>) {
     if (jsonBytes) {
       const factReport: IFactReport = JSON.parse(Buffer.from(jsonBytes).toString('utf8'));
       contract.connectivityScore = factReport.connectivityScore;
+      contract.currentSpeed = factReport.speed;
     }
 
     yield put(loadContract.success(contract, action.subpath));
@@ -246,6 +248,7 @@ function* onReportFact(action: IAsyncAction<IReportFactPayload>) {
     if (fact.connectivityScore !== null && fact.connectivityScore !== undefined) {
       const updatedContract = { ...contract };
       updatedContract.connectivityScore = fact.connectivityScore;
+      updatedContract.currentSpeed = fact.speed;
       yield put(loadContract.success(updatedContract, [updatedContract.id]));
     }
 
