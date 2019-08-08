@@ -7,6 +7,7 @@ import { MainTemplate } from 'src/components/layout/MainTemplate';
 import { Content, Size } from 'src/components/layout/Content';
 import { ConnectivityExplorer } from 'src/components/connectivity/ConnectivityExplorer';
 import { translate } from 'src/i18n';
+import { Description } from 'src/components/text/Description';
 
 // #region -------------- Interfaces --------------------------------------------------------------
 
@@ -29,6 +30,9 @@ class OverviewPage extends React.Component<IProps> {
       <MainTemplate className='mh-overview-page'>
         <Content size={Size.Md}>
           <h1>{translate(t => t.pages.overview.title)}</h1>
+          <Description>
+            {translate(t => t.pages.overview.description)}
+          </Description>
           <ConnectivityExplorer />
         </Content>
       </MainTemplate>

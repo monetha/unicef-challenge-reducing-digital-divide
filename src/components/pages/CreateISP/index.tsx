@@ -18,6 +18,7 @@ import { IState } from 'src/state/rootReducer';
 import { getPassportScannerUrl } from 'src/utils/address';
 import * as Yup from 'yup';
 import './style.scss';
+import { Description } from 'src/components/text/Description';
 
 // #region -------------- Interfaces --------------------------------------------------------------
 
@@ -75,6 +76,10 @@ class CreateISPPage extends React.Component<ICombinedProps> {
     return (
       <MainTemplate className='mh-create-isp-page'>
         <Content size={Size.Md}>
+          <Description>
+            {translate(t => t.pages.createISP.description)}
+          </Description>
+
           <FormWrapper header={translate(t => t.nav.createISP)}>
             {this.renderError()}
             {this.renderSuccess()}
