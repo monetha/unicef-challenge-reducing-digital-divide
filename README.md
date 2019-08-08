@@ -81,15 +81,15 @@ An ethereum account that is providing data to an ISP and Unicef. School register
 
 ### Internet speed provisioning
 
-1. 
+1. Select school from list and press `Report speed` button.
 
 ![alt text](https://raw.githubusercontent.com/monetha/unicef-challenge-reducing-digital-divide/master/img/report_speed_1.jpg)
 
-2. 
+2. Provide internet speed information and submit transaction in metamask.
 
 ![alt text](https://raw.githubusercontent.com/monetha/unicef-challenge-reducing-digital-divide/master/img/report_speed_2.jpg)
 
-3. 
+3. See provided details in reported dashboard
 
 ![alt text](https://raw.githubusercontent.com/monetha/unicef-challenge-reducing-digital-divide/master/img/report_speed_3.jpg)
 
