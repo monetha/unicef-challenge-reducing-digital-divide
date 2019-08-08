@@ -26,7 +26,7 @@ export const Footer: React.SFC<IProps> = () => {
           </div>
 
           <div className='mh-copyright'>
-            <a href='https://www.monetha.io' target='_blank'>
+            <a href='https://www.monetha.io/platform' target='_blank'>
               {translate(t => t.footer.copyright)}
             </a>
           </div>
