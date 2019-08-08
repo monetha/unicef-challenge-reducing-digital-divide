@@ -19,6 +19,8 @@ import { FormikField } from 'src/components/form/FormikField';
 import { Loader } from 'src/components/indicators/Loader';
 import { Alert, AlertType } from 'src/components/indicators/Alert';
 import { Description } from 'src/components/text/Description';
+import { getPassportScannerUrl } from 'src/utils/address';
+import { unicefPassportAddress } from 'src/constants/addresses';
 
 // #region -------------- Interfaces --------------------------------------------------------------
 
@@ -100,7 +102,7 @@ class CreateSchoolPage extends React.Component<ICombinedProps> {
       <MainTemplate className='mh-create-school-page'>
         <Content size={Size.Md}>
           <Description>
-            {translate(t => t.pages.createSchool.description)}
+            {translate(t => t.pages.createSchool.description)} at <a href={getPassportScannerUrl(unicefPassportAddress)} target='_blank'>{unicefPassportAddress}</a>
           </Description>
 
           <FormWrapper header={translate(t => t.nav.createSchool)}>

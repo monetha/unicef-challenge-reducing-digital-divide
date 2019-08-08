@@ -49,13 +49,13 @@ const translations = validateBaseTranslations({
   pages: {
     overview: {
       title: 'Connectivity overview',
-      description: 'TODO: description',
+      description: 'An overview of the world schools connectivity state. Two metrics are shown in an overview: compliance to contract agreed speed, average speed in Mbps.',
     },
     createISP: {
-      description: 'TODO: description',
+      description: 'A form in order to create an ISP or mobile data provider digital identity. ',
     },
     createSchool: {
-      description: 'TODO: description',
+      description: 'A form to register a new school at Unicef worlds\' school registry',
     },
   },
   form: {
