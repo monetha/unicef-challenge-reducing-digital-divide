@@ -11,6 +11,8 @@ export const ethRpcErrorCodeExtractor: ErrorCodeExtractor = (error) => {
   if (rpcError && rpcError.code) {
 
     switch (rpcError.code) {
+      case -32000:
+        return ErrorCode.DENIED_TRANSACTION;
       case -32603:
         return ErrorCode.DENIED_TRANSACTION;
       case -32005:

@@ -1,12 +1,12 @@
 import { TransactionConfig, TransactionReceipt } from 'web3-core';
-import { enableMetamask, sendTransaction, getMetamaskEthereumInstance } from './metamask';
-import { convertCallbackToPromise } from './promise';
+import { enableWallet, sendTransaction, getProviderInstance } from './walletProvider';
 import { Block } from 'web3-eth';
 import Web3 from 'web3';
 import moment from 'moment';
+import { cbToPromise } from './promise';
 
 export async function sendTx(txConfig: TransactionConfig) {
-  await enableMetamask();
+  await enableWallet();
 
   return sendTransaction(txConfig);
 }
@@ -17,15 +17,14 @@ export async function sendTx(txConfig: TransactionConfig) {
  * @param {string} txHash a string with transaction hash as value
  */
 export const waitReceipt = async (txHash: string): Promise<TransactionReceipt> => {
-  const ethereum = getMetamaskEthereumInstance();
+  const ethereum = getProviderInstance();
 
   for (let i = 0; i < 50; i += 1) {
-    const receipt: TransactionReceipt = await convertCallbackToPromise(
-      ethereum.sendAsync,
-      {
-        method: 'eth_getTransactionReceipt',
-        params: [txHash],
-      });
+
+    const receipt = await cbToPromise<TransactionReceipt>(cb => ethereum.sendAsync({
+      method: 'eth_getTransactionReceipt',
+      params: [txHash],
+    }, cb));
 
     if (!receipt) {
       await new Promise(resolve => setTimeout(resolve, 5000));

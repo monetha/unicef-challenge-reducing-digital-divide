@@ -8,7 +8,7 @@ import { putAndTakeAsync, takeEveryLatest } from 'src/core/redux/saga';
 import { getServices } from 'src/ioc/services';
 import { ContractState, IContract, IFactReport, IFactReportEntry } from 'src/models/contract';
 import { IISP } from 'src/models/isp';
-import { enableMetamask, getCurrentAccountAddress } from 'src/utils/metamask';
+import { enableWallet, getCurrentAccountAddress } from 'src/utils/walletProvider';
 import { getBlockDate, sendTx, waitReceipt } from 'src/utils/tx';
 import { FactHistoryReader, FactReader, FactWriter, IHistoryEvent, PassportOwnership, PassportReader } from 'verifiable-data';
 import { loadISPs } from '../isp/action';
@@ -128,7 +128,7 @@ function* onCreateContract(action: IAsyncAction<IContractCreatePayload>) {
     const { web3 } = getServices();
     const { ispPassportAddress, schoolAddress, speed } = action.payload;
 
-    yield enableMetamask();
+    yield enableWallet();
 
     const writer = new FactWriter(web3, ispPassportAddress);
     const contract: IContract = {
@@ -172,13 +172,14 @@ function* onReportFact(action: IAsyncAction<IReportFactPayload>) {
 
     const { contract, speed } = action.payload;
 
-    yield enableMetamask();
-    const currentAddress = getCurrentAccountAddress().toLowerCase();
+    yield enableWallet();
+    const currentAddress = yield getCurrentAccountAddress();
     if (!currentAddress) {
       throw createFriendlyError(ErrorCode.VALIDATION_ERROR, 'Please select account in your wallet provider');
     }
 
-    if (currentAddress !== contract.ispAddress.toLowerCase() && currentAddress !== contract.schoolAddress.toLowerCase()) {
+    if (currentAddress.toLowerCase() !== contract.ispAddress.toLowerCase() &&
+        currentAddress.toLowerCase() !== contract.schoolAddress.toLowerCase()) {
       throw createFriendlyError(ErrorCode.VALIDATION_ERROR, 'You must select current contract\'s ISP or school address in your wallet provider');
     }
 
