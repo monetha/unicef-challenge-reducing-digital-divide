@@ -1,9 +1,10 @@
-import { TransactionConfig, TransactionReceipt } from 'web3-core';
-import { enableWallet, sendTransaction, getProviderInstance } from './walletProvider';
-import { Block } from 'web3-eth';
-import Web3 from 'web3';
 import moment from 'moment';
-import { cbToPromise } from './promise';
+import { ErrorCode } from 'src/core/error/ErrorCode';
+import { createFriendlyError } from 'src/core/error/FriendlyError';
+import Web3 from 'web3';
+import { TransactionConfig, TransactionReceipt } from 'web3-core';
+import { Block } from 'web3-eth';
+import { enableWallet, getProviderInstance, sendTransaction } from './walletProvider';
 
 export async function sendTx(txConfig: TransactionConfig) {
   await enableWallet();
@@ -18,13 +19,15 @@ export async function sendTx(txConfig: TransactionConfig) {
  */
 export const waitReceipt = async (txHash: string): Promise<TransactionReceipt> => {
   const ethereum = getProviderInstance();
+  if (!ethereum) {
+    throw createFriendlyError(ErrorCode.NOT_SUPPORTED, 'You have to use Ethereum browser to get receipt');
+  }
+
+  const web3 = new Web3(ethereum);
 
   for (let i = 0; i < 50; i += 1) {
 
-    const receipt = await cbToPromise<TransactionReceipt>(cb => ethereum.sendAsync({
-      method: 'eth_getTransactionReceipt',
-      params: [txHash],
-    }, cb));
+    const receipt = await web3.eth.getTransactionReceipt(txHash);
 
     if (!receipt) {
       await new Promise(resolve => setTimeout(resolve, 5000));
