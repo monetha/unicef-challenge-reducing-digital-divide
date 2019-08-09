@@ -38,7 +38,7 @@ interface ICombinedProps extends RouteComponentProps<any>, IDispatchProps, IStat
 
 const getCountriesDropdown = (): React.OptionHTMLAttributes<HTMLOptionElement>[] => {
   return Object.keys(Country).map(item => ({
-    label: translate(t => t.countries[item]),
+    children: translate(t => t.countries[item]),
     value: item,
   }));
 };

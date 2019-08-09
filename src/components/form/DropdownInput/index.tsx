@@ -26,9 +26,7 @@ export class DropdownInput extends React.PureComponent<IProps> {
           <option
             key={!i.value ? '' : i.value.toString()}
             {...i}
-          >
-            {i.label || ''}
-          </option>
+          />
         ))}
       </select>
     );
