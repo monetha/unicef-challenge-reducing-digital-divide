@@ -294,7 +294,8 @@ const createTree = memoizeOne((schoolState: ISchoolState, contractState: IContra
 
       // Find active contract for school
       const contract = find(contractState.loaded, c =>
-        c.data && c.data.state === ContractState.Active && c.data.schoolAddress === school.address);
+        c.data && c.data.state === ContractState.Active && c.data.schoolAddress &&
+        c.data.schoolAddress.toLowerCase() === school.address.toLowerCase());
 
       const schoolConnectivity: ISchoolConnectivity = {
         connectivityScore: contract && contract.data.connectivityScore,

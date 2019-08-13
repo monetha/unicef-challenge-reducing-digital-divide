@@ -190,7 +190,7 @@ function* onReportFact(action: IAsyncAction<IReportFactPayload>) {
 
     let factName = `${facts.ispReport}${contract.id}`;
 
-    if (contract.schoolAddress === currentAddress) {
+    if (contract.schoolAddress.toLowerCase() === currentAddress.toLowerCase()) {
       factName = `${facts.schoolReport}${contract.id}`;
 
       // If school reports fact - precalculate connectivity score
@@ -308,7 +308,7 @@ function* onLoadReportingHistory(action: IAsyncAction<ILoadReportingHistoryPaylo
 
       const value = reports.get(dateStr);
 
-      if (event.factProviderAddress === contract.schoolAddress) {
+      if (event.factProviderAddress.toLowerCase() === contract.schoolAddress.toLowerCase()) {
         value.schoolAddress = contract.schoolAddress;
         value.schoolSpeed = factReport.speed;
       } else {
