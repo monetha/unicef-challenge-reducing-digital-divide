@@ -61,13 +61,16 @@ Start a development server with the following command
 npm start
 ```
 
-App will be running at [http://localhost:3000](http://localhost:3000) and use Ropsten testnet for MVP purpose. **Note** make sure to set Metamask for Ropsten testnet
+App will be running at [http://localhost:3000](http://localhost:3000) and use Ropsten testnet for MVP purpose. **Note** make sure to set Metamask for Ropsten testnet.
+
+To get Ethereum on Ropsten please use [this faucet](https://faucet.ropsten.be)
 
 ### Bootstrapping new environment
 
 Environment could be setup on any Ethereum compatible blockchain (Mainnet, Ropsten, Quorum, Pantheon, etc.).
 
 App requires a set of smart contracts to be pre-deployed:
+
 - `PassportLogic` - A contract which specifies upgradeable execution logic for digital identities (read more [here](https://github.com/monetha/reputation-contracts#passport-logic))
 - `PassportLogicRegistry` - A contract which allows execution logic versioning and assignment for digital identities (read more [here](https://github.com/monetha/reputation-contracts#facts-provider-registry))
 - `PassportFactory` - A contract which allows creating new digital identities for ISPs and holds a list of them (read more [here](https://github.com/monetha/reputation-contracts#passport-factory))
@@ -119,6 +122,23 @@ npm start
 ```
 
 and dev version of app will be served at http://localhost:3000
+
+## Operation costs
+
+In case if Ethereum mainnet would be chosen to run this dApp a following cost structure would be implied to network members
+
+| Actor | Operation | Cost, ETH | Cost, USD |
+| ----- | --------- | --------- | --------- |
+| Unicef | Creation of digital identity to maintain a public registry of schools | 0.00464458 | $0.96
+| ISP | Registration | 0.0053446 | $1.11 |
+| ISP | Provide internet speed for day for a single school | 0.00070066 | $0.15 |
+| School | Registering at Unicef | 0.00074366 | $0.15 |
+| School | Register a contract with ISP | 0.0007642 | $0.16 |
+| School | Report internet speed for a day | 0.00072696 | $0.15 |
+
+Prices were calculated in accordance to **Gas price = 10 GWEI** and **1 ETH = $207.22**
+
+In order to minimize operational costs a publicly open [Quorum](https://www.goquorum.com) blockchain network should be used. In such a case network participants will only require to cover the infrastructure costs of maintaining a Quorum based blockchain where ISPs together with Unicef would be blockchain network members.
 
 ## Improvements
 
