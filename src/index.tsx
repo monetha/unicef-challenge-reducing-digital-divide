@@ -12,21 +12,21 @@ import { ConnectedRouter } from 'connected-react-router';
 require('images/favicon.ico');
 
 // Load fonts
-import '!file-loader?name=[name].[ext]&outputPath=assets/fonts/!./assets/fonts/CerebriSans-Medium.ttf';
-import '!file-loader?name=[name].[ext]&outputPath=assets/fonts/!./assets/fonts/CerebriSans-Medium.woff2';
-import '!file-loader?name=[name].[ext]&outputPath=assets/fonts/!./assets/fonts/CerebriSans-Medium.woff';
-import '!file-loader?name=[name].[ext]&outputPath=assets/fonts/!./assets/fonts/CerebriSans-Light.ttf';
-import '!file-loader?name=[name].[ext]&outputPath=assets/fonts/!./assets/fonts/CerebriSans-Light.woff2';
-import '!file-loader?name=[name].[ext]&outputPath=assets/fonts/!./assets/fonts/CerebriSans-Light.woff';
-import '!file-loader?name=[name].[ext]&outputPath=assets/fonts/!./assets/fonts/CerebriSans-Italic.ttf';
-import '!file-loader?name=[name].[ext]&outputPath=assets/fonts/!./assets/fonts/CerebriSans-Italic.woff2';
-import '!file-loader?name=[name].[ext]&outputPath=assets/fonts/!./assets/fonts/CerebriSans-Italic.woff';
-import '!file-loader?name=[name].[ext]&outputPath=assets/fonts/!./assets/fonts/CerebriSans-Regular.ttf';
-import '!file-loader?name=[name].[ext]&outputPath=assets/fonts/!./assets/fonts/CerebriSans-Regular.woff2';
-import '!file-loader?name=[name].[ext]&outputPath=assets/fonts/!./assets/fonts/CerebriSans-Regular.woff';
-import '!file-loader?name=[name].[ext]&outputPath=assets/fonts/!./assets/fonts/CerebriSans-Bold.ttf';
-import '!file-loader?name=[name].[ext]&outputPath=assets/fonts/!./assets/fonts/CerebriSans-Bold.woff2';
-import '!file-loader?name=[name].[ext]&outputPath=assets/fonts/!./assets/fonts/CerebriSans-Bold.woff';
+import '!file-loader?name=[name].[ext]&outputPath=assets/fonts/!./assets/fonts/Roboto-Medium.ttf';
+import '!file-loader?name=[name].[ext]&outputPath=assets/fonts/!./assets/fonts/Roboto-Medium.woff2';
+import '!file-loader?name=[name].[ext]&outputPath=assets/fonts/!./assets/fonts/Roboto-Medium.woff';
+import '!file-loader?name=[name].[ext]&outputPath=assets/fonts/!./assets/fonts/Roboto-Light.ttf';
+import '!file-loader?name=[name].[ext]&outputPath=assets/fonts/!./assets/fonts/Roboto-Light.woff2';
+import '!file-loader?name=[name].[ext]&outputPath=assets/fonts/!./assets/fonts/Roboto-Light.woff';
+import '!file-loader?name=[name].[ext]&outputPath=assets/fonts/!./assets/fonts/Roboto-Italic.ttf';
+import '!file-loader?name=[name].[ext]&outputPath=assets/fonts/!./assets/fonts/Roboto-Italic.woff2';
+import '!file-loader?name=[name].[ext]&outputPath=assets/fonts/!./assets/fonts/Roboto-Italic.woff';
+import '!file-loader?name=[name].[ext]&outputPath=assets/fonts/!./assets/fonts/Roboto-Regular.ttf';
+import '!file-loader?name=[name].[ext]&outputPath=assets/fonts/!./assets/fonts/Roboto-Regular.woff2';
+import '!file-loader?name=[name].[ext]&outputPath=assets/fonts/!./assets/fonts/Roboto-Regular.woff';
+import '!file-loader?name=[name].[ext]&outputPath=assets/fonts/!./assets/fonts/Roboto-Bold.ttf';
+import '!file-loader?name=[name].[ext]&outputPath=assets/fonts/!./assets/fonts/Roboto-Bold.woff2';
+import '!file-loader?name=[name].[ext]&outputPath=assets/fonts/!./assets/fonts/Roboto-Bold.woff';
 
 const history = createBrowserHistory();
 const store = bootstrapRedux({}, history);
