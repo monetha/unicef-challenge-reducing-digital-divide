@@ -64,7 +64,7 @@
         "immutable-assign": "^2.1.4",
         "lodash": "^4.17.15",
         "memoize-one": "^5.0.5",
-        "minimist": "1.2.0",
+        "minimist": "1.2.2",
         "moment": "^2.24.0",
         "query-string": "^6.8.2",
         "react": "16.8.6",
